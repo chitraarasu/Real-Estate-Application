@@ -42,6 +42,7 @@ dependencies:
   get_storage: ^2.1.1
   firebase_core: ^2.13.1
   firebase_auth: ^4.6.2
+  fluttertoast: ^8.2.2
 
 dev_dependencies:
   flutter_test:
@@ -68,6 +69,18 @@ flutter:
   assets:
     - assets/
     - assets/images/
+
+  fonts:
+    - family: Nunito
+      fonts:
+        - asset: assets/fonts/Nunito-Black.ttf
+        - asset: assets/fonts/Nunito-Bold.ttf
+        - asset: assets/fonts/Nunito-ExtraBold.ttf
+        - asset: assets/fonts/Nunito-ExtraLight.ttf
+        - asset: assets/fonts/Nunito-Light.ttf
+        - asset: assets/fonts/Nunito-Medium.ttf
+        - asset: assets/fonts/Nunito-Regular.ttf
+        - asset: assets/fonts/Nunito-SemiBold.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:

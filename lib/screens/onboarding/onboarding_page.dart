@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:introduction_screen/introduction_screen.dart';
-import 'package:lottie/lottie.dart';
+import 'package:real_estate/screens/dashboard.dart';
 import 'package:real_estate/utils/c_extensions.dart';
 
+import '../../widget/widget_utils.dart';
+
 class OnBoardingPage extends StatelessWidget {
-  const OnBoardingPage({Key? key}) : super(key: key);
+  OnBoardingPage({Key? key}) : super(key: key);
+
+  GetStorage box = GetStorage();
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
-        // gradient: LinearGradient(
-        //   begin: Alignment.topLeft,
-        //   end: Alignment.bottomRight,
-        //   colors: <Color>[Colors.deepOrange, Colors.deepOrangeAccent],
-        // ),
       ),
       child: SafeArea(
         child: IntroductionScreen(
@@ -41,53 +42,20 @@ class OnBoardingPage extends StatelessWidget {
               image: buildImage('rent'.png),
               decoration: getPageDecoration(),
             ),
-            // PageViewModel(
-            //   title: 'Secure Chat',
-            //   body:
-            //       'Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.',
-            //   image: buildImage('assets/animations/security.json'),
-            //   decoration: getPageDecoration(),
-            // ),
-            // PageViewModel(
-            //   title: 'Music',
-            //   body:
-            //       'Music touches us emotionally, where words alone can’t. Listen to your favourite songs in just a tap.',
-            //   image: buildImage('assets/animations/music.json'),
-            //   decoration: getPageDecoration(),
-            // ),
-            // PageViewModel(
-            //   title: 'News',
-            //   body: 'Find the top news around you in simple terms.',
-            //   image: buildImage('assets/animations/news.json'),
-            //   decoration: getPageDecoration(),
-            // ),
-            // PageViewModel(
-            //   title: 'Chat bot',
-            //   body:
-            //       'Keep in touch, manage tasks and to-dos, get answers, control your phone.',
-            //   image: buildImage('assets/animations/robot-bot-3d.json'),
-            //   decoration: getPageDecoration(),
-            // ),
           ],
           done: Container(
             decoration: BoxDecoration(
               color: Colors.black,
               borderRadius: BorderRadius.circular(15),
             ),
-            child: const Padding(
+            child: Padding(
               padding: EdgeInsets.all(14.0),
-              child: Text(
-                "Next",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                ),
-              ),
+              child: getCustomFont("Next", 18, Colors.white, 1),
             ),
           ),
           onDone: () => goToPhoneNumberScreen(context),
           showSkipButton: true,
-          skip: const Text('Skip'),
+          skip: getCustomFont("Skip", 15, Colors.black, 1),
           onSkip: () => goToPhoneNumberScreen(context),
           skipStyle: ButtonStyle(
               foregroundColor: MaterialStateProperty.all(
@@ -114,10 +82,11 @@ class OnBoardingPage extends StatelessWidget {
   }
 
   void goToPhoneNumberScreen(context) {
-    // Get.to(
-    //       () => const PhoneNumberAndOtp(),
-    //   transition: Transition.fadeIn,
-    // );
+    box.write("isSkipped", true);
+    Get.offAll(
+      () => const Dashboard(),
+      transition: Transition.fadeIn,
+    );
   }
 
   Widget buildImage(String path) {

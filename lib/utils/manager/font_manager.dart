@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const String fontSalsa = 'Salsa';
+const String fontNunito = 'Nunito';
 
 const FontWeight extraLight = FontWeight.w200;
 const FontWeight light = FontWeight.w300;

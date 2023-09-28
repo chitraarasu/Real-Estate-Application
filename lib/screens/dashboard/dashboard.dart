@@ -43,7 +43,7 @@ class Dashboard extends StatelessWidget {
       mainScreen: Scaffold(
         body: Obx(
           () => currentPos.value == 0
-              ? const Home()
+              ? Home()
               : currentPos.value == 1
                   ? const NewHome()
                   : const Profile(),
@@ -66,7 +66,7 @@ class Dashboard extends StatelessWidget {
               color: Colors.grey.withOpacity(0.1),
               spreadRadius: 1,
               blurRadius: 50,
-              offset: Offset(0, 0), // changes position of shadow
+              offset: const Offset(0, 0),
             ),
           ],
         ),

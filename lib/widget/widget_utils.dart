@@ -41,3 +41,22 @@ Widget getCustomFont(String text, double fontSize, Color fontColor, int maxLine,
     textScaleFactor: FetchPixels.getTextScale(horFactor: horFactor),
   );
 }
+
+Widget getPaddingWidget(EdgeInsets edgeInsets, {required Widget child}) {
+  return Padding(
+    padding: edgeInsets,
+    child: child,
+  );
+}
+
+Widget vSpace(double size) {
+  return SizedBox(
+    height: FetchPixels.getPixelHeight(size),
+  );
+}
+
+Widget hSpace(double size) {
+  return SizedBox(
+    width: FetchPixels.getPixelWidth(size),
+  );
+}

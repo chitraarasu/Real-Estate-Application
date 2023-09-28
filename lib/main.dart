@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:real_estate/screens/dashboard.dart';
+import 'package:real_estate/screens/dashboard/dashboard.dart';
 import 'package:real_estate/utils/manager/font_manager.dart';
 import 'package:real_estate/utils/resizer/fetch_pixels.dart';
 
@@ -36,9 +36,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: fontNunito,
       ),
-      home: (box.read("isSkipped") ?? false)
-          ? const Dashboard()
-          : OnBoardingPage(),
+      home: (box.read("isSkipped") ?? false) ? Dashboard() : OnBoardingPage(),
     );
   }
 }

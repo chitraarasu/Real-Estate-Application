@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:introduction_screen/introduction_screen.dart';
-import 'package:real_estate/screens/dashboard.dart';
+import 'package:real_estate/screens/dashboard/dashboard.dart';
 import 'package:real_estate/utils/c_extensions.dart';
 
 import '../../widget/widget_utils.dart';
@@ -84,7 +84,7 @@ class OnBoardingPage extends StatelessWidget {
   void goToPhoneNumberScreen(context) {
     box.write("isSkipped", true);
     Get.offAll(
-      () => const Dashboard(),
+      () => Dashboard(),
       transition: Transition.fadeIn,
     );
   }

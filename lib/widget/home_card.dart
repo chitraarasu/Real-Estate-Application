@@ -11,9 +11,14 @@ import '../utils/resizer/fetch_pixels.dart';
 class HomeCard extends StatelessWidget {
   final bool isDetailedList;
   final bool isRentList;
+  final bool isMyPlaceList;
 
-  const HomeCard(
-      {super.key, this.isDetailedList = false, this.isRentList = false});
+  const HomeCard({
+    super.key,
+    this.isDetailedList = false,
+    this.isRentList = false,
+    this.isMyPlaceList = false,
+  });
 
   Widget getIconText(IconData iData, String text) {
     return Row(
@@ -38,8 +43,9 @@ class HomeCard extends StatelessWidget {
       child: Container(
         width:
             isDetailedList ? double.infinity : FetchPixels.getPixelWidth(210),
-        height:
-            isDetailedList ? FetchPixels.getPixelHeight(230) : double.infinity,
+        height: isDetailedList
+            ? FetchPixels.getPixelHeight(isMyPlaceList ? 210 : 230)
+            : double.infinity,
         margin: isDetailedList ? null : const EdgeInsets.only(right: 10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -62,25 +68,87 @@ class HomeCard extends StatelessWidget {
                       fit: BoxFit.cover,
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Padding(
-                      padding: const EdgeInsets.all(6),
-                      child: CircleAvatar(
-                        backgroundColor: white.withOpacity(.7),
-                        radius: FetchPixels.getPixelWidth(13),
-                        child: Padding(
-                          padding: const EdgeInsets.all(6.0),
-                          child: Image(
-                            image: AssetImage(
-                              "heart".png,
+                  if (isMyPlaceList)
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: Padding(
+                        padding: const EdgeInsets.all(6),
+                        child: CircleAvatar(
+                          backgroundColor: white.withOpacity(.7),
+                          radius: FetchPixels.getPixelWidth(15),
+                          child: PopupMenuButton<int>(
+                            itemBuilder: (context) => [
+                              PopupMenuItem(
+                                value: 1,
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.edit,
+                                      color: darkGrey,
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    getCustomFont(
+                                      "Edit",
+                                      16,
+                                      darkGrey,
+                                      1,
+                                    )
+                                  ],
+                                ),
+                              ),
+                              PopupMenuItem(
+                                value: 2,
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.delete_forever_rounded,
+                                      color: Colors.redAccent,
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    getCustomFont(
+                                      "Delete",
+                                      16,
+                                      Colors.redAccent,
+                                      1,
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                            icon: Icon(
+                              Icons.more_vert_rounded,
+                              size: 20,
+                              color: darkGrey,
+                            ),
+                            elevation: 1,
+                          ),
+                        ),
+                      ),
+                    ),
+                  if (!isMyPlaceList)
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: Padding(
+                        padding: const EdgeInsets.all(6),
+                        child: CircleAvatar(
+                          backgroundColor: white.withOpacity(.7),
+                          radius: FetchPixels.getPixelWidth(13),
+                          child: Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: Image(
+                              image: AssetImage(
+                                "heart".png,
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  if (isDetailedList)
+                  if (isDetailedList && !isMyPlaceList)
                     Align(
                       alignment: Alignment.topLeft,
                       child: Padding(
@@ -111,12 +179,36 @@ class HomeCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    getCustomFont(
-                      "Marina Ca, Nu",
-                      isDetailedList ? 17.5 : 15,
-                      Colors.black,
-                      1,
-                      fontWeight: semiBold,
+                    Row(
+                      children: [
+                        getCustomFont(
+                          "Marina Ca, Nu",
+                          isDetailedList ? 17.5 : 15,
+                          Colors.black,
+                          1,
+                          fontWeight: semiBold,
+                        ),
+                        Spacer(),
+                        if (isMyPlaceList)
+                          Container(
+                            decoration: BoxDecoration(
+                              color: green,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: getPaddingWidget(
+                              EdgeInsets.symmetric(
+                                vertical: 2,
+                                horizontal: 6,
+                              ),
+                              child: getCustomFont(
+                                "Active",
+                                15,
+                                Colors.white,
+                                1,
+                              ),
+                            ),
+                          )
+                      ],
                     ),
                     vSpace(2),
                     Row(
@@ -154,46 +246,47 @@ class HomeCard extends StatelessWidget {
                       ],
                     ),
                     Spacer(),
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          backgroundImage: NetworkImage(
-                            "https://via.placeholder.com/400x400",
+                    if (!isMyPlaceList)
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            backgroundImage: NetworkImage(
+                              "https://via.placeholder.com/400x400",
+                            ),
+                            radius: isDetailedList ? 11 : 10,
+                            backgroundColor: grey,
                           ),
-                          radius: isDetailedList ? 11 : 10,
-                          backgroundColor: grey,
-                        ),
-                        hSpace(7),
-                        getCustomFont(
-                          "John Adam",
-                          isDetailedList ? 13 : 12,
-                          Colors.black,
-                          1,
-                          fontWeight: bold,
-                        ),
-                        Spacer(),
-                        if (isDetailedList)
-                          Row(
-                            children: [
-                              getCustomFont(
-                                "₹200",
-                                15,
-                                Colors.black,
-                                1,
-                                fontWeight: extraBold,
-                              ),
-                              if (isRentList)
+                          hSpace(7),
+                          getCustomFont(
+                            "John Adam",
+                            isDetailedList ? 13 : 12,
+                            Colors.black,
+                            1,
+                            fontWeight: bold,
+                          ),
+                          Spacer(),
+                          if (isDetailedList)
+                            Row(
+                              children: [
                                 getCustomFont(
-                                  " /month",
-                                  13,
+                                  "₹200",
+                                  15,
                                   Colors.black,
                                   1,
-                                  fontWeight: regular,
+                                  fontWeight: extraBold,
                                 ),
-                            ],
-                          )
-                      ],
-                    ),
+                                if (isRentList)
+                                  getCustomFont(
+                                    " /month",
+                                    13,
+                                    Colors.black,
+                                    1,
+                                    fontWeight: regular,
+                                  ),
+                              ],
+                            )
+                        ],
+                      ),
                     vSpace(4),
                   ],
                 ),

@@ -9,8 +9,9 @@ import '../../utils/resizer/fetch_pixels.dart';
 class FirstAppBar extends StatelessWidget {
   final String title;
   final Widget? action;
+  final Function()? onBack;
 
-  const FirstAppBar({super.key, required this.title, this.action});
+  const FirstAppBar({super.key, required this.title, this.action, this.onBack});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,9 @@ class FirstAppBar extends StatelessWidget {
           children: [
             Row(
               children: [
-                CustomBack(),
+                CustomBack(
+                  onBack: onBack,
+                ),
                 Spacer(),
                 if (action != null) action!,
               ],

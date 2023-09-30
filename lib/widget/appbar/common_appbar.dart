@@ -6,7 +6,16 @@ import '../../utils/manager/color_manager.dart';
 import '../../utils/resizer/fetch_pixels.dart';
 
 class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const CommonAppBar({super.key});
+  final bool isHome;
+  final bool isMyPlace;
+  final bool isProfile;
+
+  const CommonAppBar({
+    super.key,
+    this.isHome = false,
+    this.isMyPlace = false,
+    this.isProfile = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,21 +33,52 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 4.0),
-          child: IconButton(
-            onPressed: () {
-              RouteController.to.currentPos.value = 3;
-            },
-            icon: Image.asset(
-              "heart_active".png,
-              width: FetchPixels.getPixelWidth(20),
-              height: FetchPixels.getPixelHeight(20),
-              color: darkBlue,
-              scale: FetchPixels.getScale(),
+        if (isHome)
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: IconButton(
+              onPressed: () {
+                RouteController.to.currentPos.value = 3;
+              },
+              icon: Image.asset(
+                "heart_active".png,
+                width: FetchPixels.getPixelWidth(20),
+                height: FetchPixels.getPixelHeight(20),
+                color: darkBlue,
+                scale: FetchPixels.getScale(),
+              ),
             ),
           ),
-        ),
+        if (isMyPlace)
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: CircleAvatar(
+              backgroundColor: darkBlue,
+              child: IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.add_box_rounded,
+                  size: FetchPixels.getPixelWidth(20),
+                  color: white,
+                ),
+              ),
+            ),
+          ),
+        if (isProfile)
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: CircleAvatar(
+              backgroundColor: darkBlue,
+              child: IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.edit,
+                  size: FetchPixels.getPixelWidth(20),
+                  color: white,
+                ),
+              ),
+            ),
+          ),
       ],
     );
   }

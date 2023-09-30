@@ -50,7 +50,7 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     RouteController routeController = Get.find();
     return Scaffold(
-      appBar: const CommonAppBar(),
+      appBar: const CommonAppBar(isHome: true),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(

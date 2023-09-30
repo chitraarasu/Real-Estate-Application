@@ -49,7 +49,7 @@ class CDrawer extends StatelessWidget {
                     ),
                     DrawerTile<IconData>(
                       Icons.add_box_rounded,
-                      "Favorites",
+                      "Your Places",
                       isActive: RouteController.to.currentPos.value == 1,
                       onTap: () {
                         RouteController.to.zoomDrawerController.close!();

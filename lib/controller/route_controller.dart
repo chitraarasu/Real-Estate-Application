@@ -6,6 +6,8 @@ class RouteController extends GetxController {
 
   final zoomDrawerController = ZoomDrawerController();
 
+  RxInt currentPos = RxInt(0);
+
   void toggleDrawer() {
     zoomDrawerController.open!();
     // update();

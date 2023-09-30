@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:real_estate/screens/home/vm_home.dart';
-import 'package:real_estate/utils/c_extensions.dart';
-import 'package:real_estate/utils/manager/color_manager.dart';
 import 'package:real_estate/utils/manager/font_manager.dart';
 import 'package:real_estate/utils/resizer/fetch_pixels.dart';
 import 'package:real_estate/widget/search.dart';
 import 'package:real_estate/widget/widget_utils.dart';
 
 import '../../controller/route_controller.dart';
+import '../../widget/appbar/common_appbar.dart';
 import '../../widget/category_chip.dart';
 import '../../widget/home_card.dart';
 import 'home_list.dart';
@@ -49,36 +48,9 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    RouteController routeController = Get.find();
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-          onPressed: () {
-            RouteController.to.toggleDrawer();
-          },
-          icon: ImageIcon(
-            AssetImage("menu".png),
-            size: 37.5,
-            color: Colors.black,
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 4.0),
-            child: IconButton(
-              onPressed: () {},
-              icon: Image.asset(
-                "heart_active".png,
-                width: FetchPixels.getPixelWidth(20),
-                height: FetchPixels.getPixelHeight(20),
-                color: darkBlue,
-                scale: FetchPixels.getScale(),
-              ),
-            ),
-          ),
-        ],
-      ),
+      appBar: const CommonAppBar(),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(

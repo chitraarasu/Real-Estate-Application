@@ -3,6 +3,7 @@ import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get/get.dart';
 import 'package:real_estate/controller/route_controller.dart';
 import 'package:real_estate/screens/dashboard/c_drawer.dart';
+import 'package:real_estate/screens/favorites/favorites.dart';
 import 'package:real_estate/screens/home/home.dart';
 import 'package:real_estate/screens/new_home/new_home.dart';
 import 'package:real_estate/screens/profile/profile.dart';
@@ -14,8 +15,6 @@ import '../../utils/resizer/fetch_pixels.dart';
 
 class Dashboard extends StatelessWidget {
   Dashboard({super.key});
-
-  RxInt currentPos = RxInt(0);
 
   List<dynamic> bottomBarList = [
     {
@@ -31,6 +30,7 @@ class Dashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    RouteController routeController = Get.find();
     return ZoomDrawer(
       controller: RouteController.to.zoomDrawerController,
       menuScreen: const CDrawer(),
@@ -42,11 +42,13 @@ class Dashboard extends StatelessWidget {
       slideWidth: MediaQuery.of(context).size.width * 0.65,
       mainScreen: Scaffold(
         body: Obx(
-          () => currentPos.value == 0
+          () => routeController.currentPos.value == 0
               ? Home()
-              : currentPos.value == 1
+              : routeController.currentPos.value == 1
                   ? const NewHome()
-                  : const Profile(),
+                  : routeController.currentPos.value == 2
+                      ? const Profile()
+                      : const Favorites(),
         ),
         bottomNavigationBar: buildBottomBar(
           FetchPixels.getPixelHeight(40),
@@ -57,6 +59,7 @@ class Dashboard extends StatelessWidget {
   }
 
   Container buildBottomBar(double size, double iconSize) {
+    RouteController routeController = Get.find();
     return Container(
         height: FetchPixels.getPixelHeight(80),
         decoration: BoxDecoration(
@@ -77,7 +80,7 @@ class Dashboard extends StatelessWidget {
               flex: 1,
               child: GestureDetector(
                 onTap: () {
-                  currentPos.value = index;
+                  routeController.currentPos.value = index;
                 },
                 child: Center(
                   child: Container(
@@ -102,12 +105,16 @@ class Dashboard extends StatelessWidget {
                                     bottomBarList[index]["icon"],
                                   ),
                                   color:
-                                      currentPos.value == index ? black : grey,
+                                      routeController.currentPos.value == index
+                                          ? black
+                                          : grey,
                                 ),
                                 getCustomFont(
                                   bottomBarList[index]["title"],
                                   10,
-                                  currentPos.value == index ? black : grey,
+                                  routeController.currentPos.value == index
+                                      ? black
+                                      : grey,
                                   1,
                                 )
                               ],

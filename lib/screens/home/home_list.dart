@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:real_estate/utils/resizer/fetch_pixels.dart';
 import 'package:real_estate/widget/widget_utils.dart';
 
-import '../../widget/first_appbar.dart';
+import '../../widget/appbar/first_appbar.dart';
 import '../../widget/home_card.dart';
 
 class HomeList extends StatelessWidget {

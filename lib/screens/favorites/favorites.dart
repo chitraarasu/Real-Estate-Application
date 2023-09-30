@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../widget/appbar/common_appbar.dart';
 
-class NewHome extends StatelessWidget {
-  const NewHome({super.key});
+class Favorites extends StatelessWidget {
+  const Favorites({super.key});
 
   @override
   Widget build(BuildContext context) {

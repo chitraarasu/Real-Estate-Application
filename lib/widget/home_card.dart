@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:real_estate/screens/login/login_screen.dart';
 import 'package:real_estate/utils/c_extensions.dart';
 import 'package:real_estate/widget/widget_utils.dart';
 
@@ -12,12 +13,16 @@ class HomeCard extends StatelessWidget {
   final bool isDetailedList;
   final bool isRentList;
   final bool isMyPlaceList;
+  final bool isManagePlaceList;
+  final Function()? onTap;
 
   const HomeCard({
     super.key,
     this.isDetailedList = false,
     this.isRentList = false,
     this.isMyPlaceList = false,
+    this.isManagePlaceList = false,
+    this.onTap,
   });
 
   Widget getIconText(IconData iData, String text) {
@@ -38,7 +43,13 @@ class HomeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Get.to(() => HomeDetailView());
+        if (onTap == null) {
+          Get.to(() => HomeDetailView(
+                isManagePlaceList: isManagePlaceList,
+              ));
+        } else {
+          onTap!();
+        }
       },
       child: Container(
         width:
@@ -134,14 +145,19 @@ class HomeCard extends StatelessWidget {
                       alignment: Alignment.topRight,
                       child: Padding(
                         padding: const EdgeInsets.all(6),
-                        child: CircleAvatar(
-                          backgroundColor: white.withOpacity(.7),
-                          radius: FetchPixels.getPixelWidth(13),
-                          child: Padding(
-                            padding: const EdgeInsets.all(6.0),
-                            child: Image(
-                              image: AssetImage(
-                                "heart".png,
+                        child: GestureDetector(
+                          onTap: () {
+                            openSignInAlert();
+                          },
+                          child: CircleAvatar(
+                            backgroundColor: white.withOpacity(.7),
+                            radius: FetchPixels.getPixelWidth(13),
+                            child: Padding(
+                              padding: const EdgeInsets.all(6.0),
+                              child: Image(
+                                image: AssetImage(
+                                  "heart".png,
+                                ),
                               ),
                             ),
                           ),
@@ -190,21 +206,47 @@ class HomeCard extends StatelessWidget {
                         ),
                         Spacer(),
                         if (isMyPlaceList)
-                          Container(
-                            decoration: BoxDecoration(
-                              color: green,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: getPaddingWidget(
-                              EdgeInsets.symmetric(
-                                vertical: 2,
-                                horizontal: 6,
+                          GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  title: getCustomFont(
+                                    "Reason for rejection!",
+                                    18,
+                                    Colors.redAccent,
+                                    1,
+                                    fontWeight: bold,
+                                  ),
+                                  content: SingleChildScrollView(
+                                    child: getCustomFont(
+                                      "Lorem Ipsum is simply dummy unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+                                      14,
+                                      darkGrey,
+                                      1000,
+                                      fontWeight: semiBold,
+                                      textAlign: TextAlign.justify,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: green,
+                                borderRadius: BorderRadius.circular(10),
                               ),
-                              child: getCustomFont(
-                                "Active",
-                                15,
-                                Colors.white,
-                                1,
+                              child: getPaddingWidget(
+                                EdgeInsets.symmetric(
+                                  vertical: 2,
+                                  horizontal: 6,
+                                ),
+                                child: getCustomFont(
+                                  "Active",
+                                  15,
+                                  Colors.white,
+                                  1,
+                                ),
                               ),
                             ),
                           )

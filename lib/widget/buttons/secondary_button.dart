@@ -1,33 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:real_estate/utils/manager/color_manager.dart';
 
 import '../widget_utils.dart';
 
 class SecondaryButton extends StatelessWidget {
   final bool isFromProfile;
+  final String? title;
+  final EdgeInsets? padding;
+  final Color? color;
+  final Function()? onTap;
 
-  const SecondaryButton({super.key, this.isFromProfile = false});
+  const SecondaryButton({
+    super.key,
+    this.isFromProfile = false,
+    this.title,
+    this.padding,
+    this.color,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(
       style: OutlinedButton.styleFrom(
         side: BorderSide(
-          color: isFromProfile ? darkGrey : Colors.white,
+          color: color ?? Colors.white,
           width: isFromProfile ? 1 : 2.0,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.0),
         ),
-        textStyle: TextStyle(color: isFromProfile ? darkGrey : Colors.white),
+        textStyle: TextStyle(color: color ?? Colors.white),
       ),
-      onPressed: () {},
+      onPressed: onTap,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: padding ?? EdgeInsets.all(8.0),
         child: getCustomFont(
-          "Logout",
+          title ?? "Logout",
           isFromProfile ? 17 : 15,
-          isFromProfile ? darkGrey : Colors.white,
+          color ?? Colors.white,
           1,
         ),
       ),

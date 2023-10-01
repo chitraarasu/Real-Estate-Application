@@ -41,9 +41,10 @@ class NewHome extends StatelessWidget {
                     EdgeInsets.only(
                       bottom: FetchPixels.getPixelHeight(20),
                     ),
-                    child: const HomeCard(
+                    child: HomeCard(
                       isDetailedList: true,
                       isMyPlaceList: true,
+                      onTap: () {},
                     ),
                   );
                 },

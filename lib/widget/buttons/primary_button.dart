@@ -7,8 +7,9 @@ import '../widget_utils.dart';
 
 class PrimaryButton extends StatelessWidget {
   final String title;
+  final double? radius;
 
-  PrimaryButton(this.title);
+  PrimaryButton(this.title, {this.radius});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class PrimaryButton extends StatelessWidget {
         backgroundColor: darkBlue,
         // side: const BorderSide(color: Colors.white, width: 2.0),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30.0),
+          borderRadius: BorderRadius.circular(radius ?? 30.0),
         ),
         textStyle: const TextStyle(color: Colors.white),
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:real_estate/screens/profile/manage_places.dart';
 
 import '../../utils/manager/color_manager.dart';
 import '../../utils/manager/font_manager.dart';
@@ -155,29 +156,34 @@ class Profile extends StatelessWidget {
                       ],
                     ),
                     vSpace(15),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(width: .5, color: darkGrey),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: getCustomFont(
-                                "Manage Places",
-                                15,
-                                Colors.black,
-                                1,
-                                fontWeight: semiBold,
+                    GestureDetector(
+                      onTap: () {
+                        Get.to(() => ManagePlaces());
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(width: .5, color: darkGrey),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: getCustomFont(
+                                  "Manage Places",
+                                  15,
+                                  Colors.black,
+                                  1,
+                                  fontWeight: semiBold,
+                                ),
                               ),
-                            ),
-                            Icon(
-                              Icons.double_arrow_rounded,
-                              color: darkGrey,
-                            )
-                          ],
+                              Icon(
+                                Icons.double_arrow_rounded,
+                                color: darkGrey,
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -196,6 +202,7 @@ class Profile extends StatelessWidget {
                 Expanded(
                   child: SecondaryButton(
                     isFromProfile: true,
+                    color: darkGrey,
                   ),
                 ),
               ],

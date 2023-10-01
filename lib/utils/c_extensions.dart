@@ -67,8 +67,8 @@ extension ColorExtension on String {
 
 extension Storage on String {
   get png => "assets/images/$this.png";
-  // get railwayImage => "assets/railway_images/$this";
-  // get lottie => "assets/animations/$this.json";
+// get railwayImage => "assets/railway_images/$this";
+// get lottie => "assets/animations/$this.json";
 }
 
 getErrorMessage(msg) {
@@ -85,4 +85,12 @@ getErrorMessage(msg) {
       textAlign: TextAlign.center,
     ),
   );
+}
+
+hideKeyboard() {
+  WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
+}
+
+unFocus(PointerDownEvent event) {
+  hideKeyboard();
 }

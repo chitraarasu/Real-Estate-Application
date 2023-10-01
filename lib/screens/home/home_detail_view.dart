@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:real_estate/utils/c_extensions.dart';
 import 'package:real_estate/utils/manager/font_manager.dart';
 import 'package:real_estate/widget/appbar/first_appbar.dart';
+import 'package:real_estate/widget/buttons/secondary_button.dart';
 
 import '../../utils/manager/color_manager.dart';
 import '../../utils/resizer/fetch_pixels.dart';
 import '../../widget/buttons/primary_button.dart';
 import '../../widget/widget_utils.dart';
+import '../textbox/first_textbox.dart';
+import '../textbox/vm_textbox.dart';
 
 class HomeDetailView extends StatelessWidget {
-  const HomeDetailView({super.key});
+  final bool isManagePlaceList;
+
+  HomeDetailView({super.key, this.isManagePlaceList = false});
 
   Widget getIconText(IconData iData, String text) {
     return Row(
@@ -22,6 +28,79 @@ class HomeDetailView extends StatelessWidget {
         hSpace(3),
         getCustomFont(text, 13, darkGrey, 1, fontWeight: semiBold),
       ],
+    );
+  }
+
+  final reason = VMTextBox(
+    placeholder: '',
+    keyboardType: TextInputType.multiline,
+  );
+
+  rejectSheet() {
+    Get.bottomSheet(
+      Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
+          ),
+        ),
+        child: SafeArea(
+          minimum: const EdgeInsets.only(top: 35, bottom: 20),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      getCustomFont(
+                        "Enter the reason!",
+                        22,
+                        Colors.black,
+                        1,
+                        fontWeight: bold,
+                      ),
+                      vSpace(16),
+                      FirstTextBox(
+                        data: reason,
+                        isNeedTopPlaceholder: false,
+                        maxLines: 10,
+                      ),
+                      vSpace(16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: SecondaryButton(
+                              title: "Reject",
+                              // isFromProfile: true,
+                              padding: EdgeInsets.symmetric(
+                                vertical: FetchPixels.getPixelHeight(10),
+                                horizontal: FetchPixels.getPixelWidth(17),
+                              ),
+                              color: Colors.redAccent,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withOpacity(0.30),
+      isDismissible: true,
+      isScrollControlled: true,
     );
   }
 
@@ -39,27 +118,29 @@ class HomeDetailView extends StatelessWidget {
                 children: [
                   FirstAppBar(
                     title: "Details",
-                    action: Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {},
-                          icon: Image.asset(
-                            "heart".png,
-                            width: FetchPixels.getPixelWidth(20),
-                            height: FetchPixels.getPixelHeight(20),
-                            color: darkGrey,
-                            scale: FetchPixels.getScale(),
+                    action: isManagePlaceList
+                        ? Container()
+                        : Row(
+                            children: [
+                              IconButton(
+                                onPressed: () {},
+                                icon: Image.asset(
+                                  "heart".png,
+                                  width: FetchPixels.getPixelWidth(20),
+                                  height: FetchPixels.getPixelHeight(20),
+                                  color: darkGrey,
+                                  scale: FetchPixels.getScale(),
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {},
+                                icon: Icon(
+                                  Icons.ios_share_outlined,
+                                  color: darkGrey,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.ios_share_outlined,
-                            color: darkGrey,
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
                   Expanded(
                     child: SingleChildScrollView(
@@ -219,27 +300,54 @@ class HomeDetailView extends StatelessWidget {
                 top: false,
                 child: getPaddingWidget(
                   EdgeInsets.symmetric(
-                    vertical: FetchPixels.getPixelHeight(25),
+                    vertical:
+                        FetchPixels.getPixelHeight(isManagePlaceList ? 20 : 25),
                   ),
-                  child: Row(
-                    children: [
-                      getCustomFont(
-                        "\$2,300",
-                        22,
-                        Colors.black,
-                        1,
-                        fontWeight: bold,
-                      ),
-                      getCustomFont(
-                        " /month",
-                        16,
-                        darkGrey,
-                        1,
-                      ),
-                      Spacer(),
-                      PrimaryButton("Call"),
-                    ],
-                  ),
+                  child: isManagePlaceList
+                      ? Row(
+                          children: [
+                            Expanded(
+                              child: SecondaryButton(
+                                title: "Reject",
+                                isFromProfile: true,
+                                padding: EdgeInsets.symmetric(
+                                  vertical: FetchPixels.getPixelHeight(12),
+                                  horizontal: FetchPixels.getPixelWidth(17),
+                                ),
+                                color: Colors.redAccent,
+                                onTap: () {
+                                  rejectSheet();
+                                },
+                              ),
+                            ),
+                            hSpace(10),
+                            Expanded(
+                              child: PrimaryButton(
+                                "Approve",
+                                radius: 10,
+                              ),
+                            ),
+                          ],
+                        )
+                      : Row(
+                          children: [
+                            getCustomFont(
+                              "\$2,300",
+                              22,
+                              Colors.black,
+                              1,
+                              fontWeight: bold,
+                            ),
+                            getCustomFont(
+                              " /month",
+                              16,
+                              darkGrey,
+                              1,
+                            ),
+                            Spacer(),
+                            PrimaryButton("Call"),
+                          ],
+                        ),
                 ),
               ),
             ),

@@ -9,12 +9,18 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool isHome;
   final bool isMyPlace;
   final bool isProfile;
+  final bool isEditModeOn;
+  final Function()? onEditClick;
+  final Function()? onDoneClick;
 
   const CommonAppBar({
     super.key,
     this.isHome = false,
     this.isMyPlace = false,
     this.isProfile = false,
+    this.isEditModeOn = false,
+    this.onEditClick,
+    this.onDoneClick,
   });
 
   @override
@@ -70,9 +76,24 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: CircleAvatar(
               backgroundColor: darkBlue,
               child: IconButton(
-                onPressed: () {},
+                onPressed: onEditClick,
                 icon: Icon(
                   Icons.edit,
+                  size: FetchPixels.getPixelWidth(20),
+                  color: white,
+                ),
+              ),
+            ),
+          ),
+        if (isEditModeOn)
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: CircleAvatar(
+              backgroundColor: darkBlue,
+              child: IconButton(
+                onPressed: onDoneClick,
+                icon: Icon(
+                  Icons.done,
                   size: FetchPixels.getPixelWidth(20),
                   color: white,
                 ),

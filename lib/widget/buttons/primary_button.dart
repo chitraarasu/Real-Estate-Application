@@ -8,8 +8,9 @@ import '../widget_utils.dart';
 class PrimaryButton extends StatelessWidget {
   final String title;
   final double? radius;
+  final EdgeInsets? padding;
 
-  PrimaryButton(this.title, {this.radius});
+  PrimaryButton(this.title, {this.radius, this.padding});
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +25,11 @@ class PrimaryButton extends StatelessWidget {
       ),
       onPressed: () {},
       child: getPaddingWidget(
-        EdgeInsets.symmetric(
-          vertical: FetchPixels.getPixelHeight(12),
-          horizontal: FetchPixels.getPixelWidth(17),
-        ),
+        padding ??
+            EdgeInsets.symmetric(
+              vertical: FetchPixels.getPixelHeight(12),
+              horizontal: FetchPixels.getPixelWidth(17),
+            ),
         child: getCustomFont(
           title,
           16,

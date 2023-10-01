@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:real_estate/utils/c_extensions.dart';
 
 import '../../controller/route_controller.dart';
+import '../../screens/your_places/add_new_place.dart';
 import '../../utils/manager/color_manager.dart';
 import '../../utils/resizer/fetch_pixels.dart';
 
@@ -61,7 +63,9 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: CircleAvatar(
               backgroundColor: darkBlue,
               child: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Get.to(() => AddNewPlace());
+                },
                 icon: Icon(
                   Icons.add_box_rounded,
                   size: FetchPixels.getPixelWidth(20),

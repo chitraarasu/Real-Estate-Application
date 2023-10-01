@@ -56,7 +56,7 @@ class FirstTextBox extends StatelessWidget {
               onTapOutside: unFocus,
               enabled: enabled,
               cursorColor: darkBlue,
-              maxLines: maxLines,
+              maxLines: maxLines ?? 1,
               obscureText: obscureText ?? false,
               decoration: InputDecoration(
                 border: InputBorder.none,
@@ -75,7 +75,7 @@ class FirstTextBox extends StatelessWidget {
                 //   minHeight: 50,
                 // ),
               ),
-              style: TextStyle(
+              style: const TextStyle(
                 fontWeight: semiBold,
                 fontSize: 15,
                 color: Colors.black,

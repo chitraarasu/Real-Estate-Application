@@ -7,6 +7,7 @@ class SecondaryButton extends StatelessWidget {
   final String? title;
   final EdgeInsets? padding;
   final Color? color;
+  final double? radius;
   final Function()? onTap;
 
   const SecondaryButton({
@@ -15,6 +16,7 @@ class SecondaryButton extends StatelessWidget {
     this.title,
     this.padding,
     this.color,
+    this.radius,
     this.onTap,
   });
 
@@ -27,7 +29,7 @@ class SecondaryButton extends StatelessWidget {
           width: isFromProfile ? 1 : 2.0,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0),
+          borderRadius: BorderRadius.circular(radius ?? 12.0),
         ),
         textStyle: TextStyle(color: color ?? Colors.white),
       ),

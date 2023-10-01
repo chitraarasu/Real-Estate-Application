@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:real_estate/controller/route_controller.dart';
 import 'package:real_estate/utils/c_extensions.dart';
 import 'package:real_estate/utils/manager/color_manager.dart';
-import 'package:real_estate/utils/resizer/fetch_pixels.dart';
 import 'package:real_estate/widget/appbar/first_appbar.dart';
 import 'package:real_estate/widget/widget_utils.dart';
 
@@ -18,7 +17,7 @@ class CDrawer extends StatelessWidget {
       backgroundColor: darkBlue,
       body: SafeArea(
         child: getPaddingWidget(
-          EdgeInsets.all(FetchPixels.getPixelWidth(10)),
+          EdgeInsets.all(10),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -80,7 +79,13 @@ class CDrawer extends StatelessWidget {
               Spacer(),
               Row(
                 children: [
-                  SecondaryButton(),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 3,
+                    ),
+                    child: SecondaryButton(),
+                  ),
                 ],
               ),
             ],
@@ -103,8 +108,8 @@ class DrawerTile<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return getPaddingWidget(
       EdgeInsets.symmetric(
-        vertical: FetchPixels.getPixelHeight(8),
-        horizontal: FetchPixels.getPixelWidth(3),
+        vertical: 8,
+        horizontal: 3,
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
@@ -126,17 +131,30 @@ class DrawerTile<T> extends StatelessWidget {
                           ? ImageIcon(
                               AssetImage(icon.toString().png),
                               color: Colors.white,
-                              size: FetchPixels.getPixelHeight(
-                                icon == "heart" ? 17 : 20,
-                              ),
+                              size: icon == "heart" ? 17 : 20,
+                              // size: FetchPixels.getPixelHeight(
+                              //   icon == "heart" ? 17 : 20,
+                              // ),
                             )
                           : Icon(
                               icon as IconData,
                               color: Colors.white,
-                              size: FetchPixels.getPixelHeight(22),
+                              size: 22,
+                              // size: FetchPixels.getPixelHeight(22),
                             ),
-                      hSpace(20),
-                      getCustomFont(title, 18, Colors.white, 1),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      // hSpace(20),
+                      // getCustomFont(title, 18, Colors.white, 1),
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),
+                        maxLines: 1,
+                      )
                     ],
                   ),
                 ),

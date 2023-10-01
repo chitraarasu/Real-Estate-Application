@@ -48,12 +48,13 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
               onPressed: () {
                 RouteController.to.currentPos.value = 3;
               },
-              icon: Image.asset(
-                "heart_active".png,
-                width: FetchPixels.getPixelWidth(20),
-                height: FetchPixels.getPixelHeight(20),
+              icon: ImageIcon(
+                AssetImage("heart".png),
+                size: 24,
+                // width: FetchPixels.getPixelWidth(20),
+                // height: FetchPixels.getPixelHeight(20),
                 color: darkBlue,
-                scale: FetchPixels.getScale(),
+                // scale: FetchPixels.getScale(),
               ),
             ),
           ),

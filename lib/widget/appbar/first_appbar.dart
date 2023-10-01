@@ -73,15 +73,26 @@ class CustomBack extends StatelessWidget {
                   Icon(
                     Icons.arrow_back_ios_new_rounded,
                     color: color,
-                    size: FetchPixels.getPixelHeight(20),
+                    size: 20,
                   ),
-                  hSpace(3),
-                  getCustomFont(
+                  SizedBox(
+                    width: 3,
+                  ),
+                  // hSpace(3),
+                  Text(
                     "Back",
-                    14,
-                    color,
-                    1,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: color,
+                    ),
+                    maxLines: 1,
                   ),
+                  // getCustomFont(
+                  //   "Back",
+                  //   14,
+                  //   color,
+                  //   1,
+                  // ),
                 ],
               ),
             ),

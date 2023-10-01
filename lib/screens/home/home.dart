@@ -71,10 +71,11 @@ class Home extends StatelessWidget {
               ),
               vSpace(15),
               GestureDetector(
-                  onTap: () {
-                    Get.to(() => SearchScreen());
-                  },
-                  child: Search(enable: false)),
+                onTap: () {
+                  Get.to(() => SearchScreen());
+                },
+                child: Search(enable: false),
+              ),
               vSpace(12.5),
               Transform.translate(
                 offset: const Offset(-8, 0),

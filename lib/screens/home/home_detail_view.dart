@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:real_estate/screens/profile/pdf_viewer.dart';
 import 'package:real_estate/utils/c_extensions.dart';
 import 'package:real_estate/utils/manager/font_manager.dart';
 import 'package:real_estate/widget/appbar/first_appbar.dart';
@@ -263,6 +264,45 @@ class HomeDetailView extends StatelessWidget {
                             thickness: 1,
                             color: grey,
                           ),
+                          if (isManagePlaceList)
+                            Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    Get.to(() => PdfView());
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFD33B35),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: getPaddingWidget(
+                                      EdgeInsets.symmetric(
+                                        vertical:
+                                            FetchPixels.getPixelHeight(10),
+                                        horizontal:
+                                            FetchPixels.getPixelWidth(15),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          getCustomFont(
+                                            "Land Documents",
+                                            15,
+                                            Colors.white,
+                                            1,
+                                          ),
+                                          Spacer(),
+                                          Icon(
+                                            Icons.picture_as_pdf,
+                                            color: Colors.white,
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           vSpace(15),
                           getCustomFont(
                             "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
@@ -304,28 +344,50 @@ class HomeDetailView extends StatelessWidget {
                         FetchPixels.getPixelHeight(isManagePlaceList ? 20 : 25),
                   ),
                   child: isManagePlaceList
-                      ? Row(
+                      ? Column(
                           children: [
-                            Expanded(
-                              child: SecondaryButton(
-                                title: "Reject",
-                                isFromProfile: true,
-                                padding: EdgeInsets.symmetric(
-                                  vertical: FetchPixels.getPixelHeight(12),
-                                  horizontal: FetchPixels.getPixelWidth(17),
+                            Row(
+                              children: [
+                                getCustomFont(
+                                  "\$2,300",
+                                  22,
+                                  Colors.black,
+                                  1,
+                                  fontWeight: bold,
                                 ),
-                                color: Colors.redAccent,
-                                onTap: () {
-                                  rejectSheet();
-                                },
-                              ),
+                                getCustomFont(
+                                  " /month",
+                                  16,
+                                  darkGrey,
+                                  1,
+                                ),
+                              ],
                             ),
-                            hSpace(10),
-                            Expanded(
-                              child: PrimaryButton(
-                                "Approve",
-                                radius: 10,
-                              ),
+                            vSpace(15),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: SecondaryButton(
+                                    title: "Reject",
+                                    isFromProfile: true,
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: FetchPixels.getPixelHeight(12),
+                                      horizontal: FetchPixels.getPixelWidth(17),
+                                    ),
+                                    color: Colors.redAccent,
+                                    onTap: () {
+                                      rejectSheet();
+                                    },
+                                  ),
+                                ),
+                                hSpace(10),
+                                Expanded(
+                                  child: PrimaryButton(
+                                    "Approve",
+                                    radius: 10,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         )

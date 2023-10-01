@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:real_estate/screens/home/map_view.dart';
+import 'package:real_estate/utils/manager/color_manager.dart';
 import 'package:real_estate/utils/resizer/fetch_pixels.dart';
 import 'package:real_estate/widget/widget_utils.dart';
 
@@ -19,7 +22,21 @@ class HomeList extends StatelessWidget {
         edgeInsets,
         child: Column(
           children: [
-            FirstAppBar(title: title),
+            FirstAppBar(
+              title: title,
+              action: IconButton(
+                onPressed: () {
+                  Get.to(() => MapView());
+                },
+                icon: CircleAvatar(
+                  backgroundColor: darkBlue,
+                  child: Icon(
+                    Icons.map_rounded,
+                    color: white,
+                  ),
+                ),
+              ),
+            ),
             Expanded(
               child: ListView.builder(
                 itemCount: 20,

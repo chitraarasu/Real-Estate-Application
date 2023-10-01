@@ -6,8 +6,8 @@ import '../../widget/appbar/common_appbar.dart';
 import '../../widget/home_card.dart';
 import '../../widget/widget_utils.dart';
 
-class NewHome extends StatelessWidget {
-  const NewHome({super.key});
+class YourPlaces extends StatelessWidget {
+  const YourPlaces({super.key});
 
   @override
   Widget build(BuildContext context) {

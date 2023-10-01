@@ -5,13 +5,13 @@ import 'package:real_estate/controller/route_controller.dart';
 import 'package:real_estate/screens/dashboard/c_drawer.dart';
 import 'package:real_estate/screens/favorites/favorites.dart';
 import 'package:real_estate/screens/home/home.dart';
-import 'package:real_estate/screens/new_home/new_home.dart';
 import 'package:real_estate/screens/profile/profile.dart';
 import 'package:real_estate/utils/c_extensions.dart';
 import 'package:real_estate/widget/widget_utils.dart';
 
 import '../../utils/manager/color_manager.dart';
 import '../../utils/resizer/fetch_pixels.dart';
+import '../your_places/your_places.dart';
 
 class Dashboard extends StatelessWidget {
   Dashboard({super.key});
@@ -45,7 +45,7 @@ class Dashboard extends StatelessWidget {
           () => routeController.currentPos.value == 0
               ? Home()
               : routeController.currentPos.value == 1
-                  ? const NewHome()
+                  ? const YourPlaces()
                   : routeController.currentPos.value == 2
                       ? Profile()
                       : const Favorites(),

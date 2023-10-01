@@ -105,7 +105,7 @@ class Home extends StatelessWidget {
               getTitle("Buy a home"),
               vSpace(15),
               SizedBox(
-                height: FetchPixels.getPixelHeight(210),
+                height: FetchPixels.getPixelHeight(220),
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: vmHome.category.length,
@@ -121,7 +121,7 @@ class Home extends StatelessWidget {
               ),
               vSpace(15),
               SizedBox(
-                height: FetchPixels.getPixelHeight(210),
+                height: FetchPixels.getPixelHeight(220),
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: vmHome.category.length,

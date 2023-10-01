@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:real_estate/screens/login/vm_login.dart';
 import 'package:real_estate/utils/manager/font_manager.dart';
+import 'package:real_estate/utils/resizer/fetch_pixels.dart';
 import 'package:real_estate/widget/buttons/primary_button.dart';
 
 import '../../widget/widget_utils.dart';
@@ -33,7 +34,9 @@ class LoginScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: EdgeInsets.symmetric(
+                  horizontal: FetchPixels.getPixelWidth(20),
+                ),
                 child: Form(
                   key: data.formKey,
                   child: Column(

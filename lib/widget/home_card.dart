@@ -55,7 +55,7 @@ class HomeCard extends StatelessWidget {
         width:
             isDetailedList ? double.infinity : FetchPixels.getPixelWidth(210),
         height: isDetailedList
-            ? FetchPixels.getPixelHeight(isMyPlaceList ? 210 : 230)
+            ? FetchPixels.getPixelHeight(isMyPlaceList ? 220 : 240)
             : double.infinity,
         margin: isDetailedList ? null : const EdgeInsets.only(right: 10),
         child: Column(
@@ -82,62 +82,58 @@ class HomeCard extends StatelessWidget {
                   if (isMyPlaceList)
                     Align(
                       alignment: Alignment.topRight,
-                      child: Padding(
-                        padding: const EdgeInsets.all(6),
-                        child: CircleAvatar(
-                          backgroundColor: white.withOpacity(.7),
-                          radius: FetchPixels.getPixelWidth(15),
-                          child: PopupMenuButton<int>(
-                            itemBuilder: (context) => [
-                              PopupMenuItem(
-                                value: 1,
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.edit,
-                                      color: darkGrey,
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    getCustomFont(
-                                      "Edit",
-                                      16,
-                                      darkGrey,
-                                      1,
-                                    )
-                                  ],
+                      child: PopupMenuButton<int>(
+                        itemBuilder: (context) => [
+                          PopupMenuItem(
+                            value: 1,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.edit,
+                                  color: darkGrey,
                                 ),
-                              ),
-                              PopupMenuItem(
-                                value: 2,
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.delete_forever_rounded,
-                                      color: Colors.redAccent,
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    getCustomFont(
-                                      "Delete",
-                                      16,
-                                      Colors.redAccent,
-                                      1,
-                                    )
-                                  ],
+                                SizedBox(
+                                  width: 10,
                                 ),
-                              ),
-                            ],
-                            icon: Icon(
-                              Icons.more_vert_rounded,
-                              size: 20,
-                              color: darkGrey,
+                                getCustomFont(
+                                  "Edit",
+                                  16,
+                                  darkGrey,
+                                  1,
+                                )
+                              ],
                             ),
-                            elevation: 1,
+                          ),
+                          PopupMenuItem(
+                            value: 2,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.delete_forever_rounded,
+                                  color: Colors.redAccent,
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                getCustomFont(
+                                  "Delete",
+                                  16,
+                                  Colors.redAccent,
+                                  1,
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                        icon: CircleAvatar(
+                          backgroundColor: white.withOpacity(.7),
+                          child: Icon(
+                            Icons.more_vert_rounded,
+                            size: 20,
+                            color: darkGrey,
                           ),
                         ),
+                        elevation: 1,
                       ),
                     ),
                   if (!isMyPlaceList)

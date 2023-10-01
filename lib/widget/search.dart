@@ -36,7 +36,7 @@ class Search extends StatelessWidget {
               color: darkGrey,
             ),
             border: InputBorder.none,
-            // contentPadding: EdgeInsets.all(5.5),
+            contentPadding: EdgeInsets.symmetric(vertical: 2.5),
             prefixIcon: Icon(
               Icons.search,
               color: darkGrey,

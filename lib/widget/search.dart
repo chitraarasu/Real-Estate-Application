@@ -29,6 +29,7 @@ class Search extends StatelessWidget {
           maxLines: 1,
           onChanged: onChange,
           enabled: enable,
+          autofocus: enable ?? false,
           decoration: InputDecoration(
             hintText: "Search",
             hintStyle: TextStyle(

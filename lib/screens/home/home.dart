@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:real_estate/screens/home/search_screen.dart';
 import 'package:real_estate/screens/home/vm_home.dart';
 import 'package:real_estate/utils/manager/font_manager.dart';
 import 'package:real_estate/utils/resizer/fetch_pixels.dart';
@@ -69,7 +70,11 @@ class Home extends StatelessWidget {
                 fontWeight: bold,
               ),
               vSpace(15),
-              Search(enable: false),
+              GestureDetector(
+                  onTap: () {
+                    Get.to(() => SearchScreen());
+                  },
+                  child: Search(enable: false)),
               vSpace(12.5),
               Transform.translate(
                 offset: const Offset(-8, 0),

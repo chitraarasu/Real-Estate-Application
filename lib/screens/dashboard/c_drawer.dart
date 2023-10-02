@@ -7,12 +7,15 @@ import 'package:real_estate/widget/appbar/first_appbar.dart';
 import 'package:real_estate/widget/widget_utils.dart';
 
 import '../../widget/buttons/secondary_button.dart';
+import '../login/vm_login.dart';
 
 class CDrawer extends StatelessWidget {
-  const CDrawer({Key? key}) : super(key: key);
+  CDrawer({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final data = Get.find<VMLogin>();
+
     return Scaffold(
       backgroundColor: darkBlue,
       body: SafeArea(
@@ -77,16 +80,24 @@ class CDrawer extends StatelessWidget {
                 ),
               ),
               Spacer(),
-              Row(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 8,
-                      horizontal: 3,
-                    ),
-                    child: SecondaryButton(),
-                  ),
-                ],
+              Obx(
+                () => !data.isLoggedIn.value
+                    ? Container()
+                    : Row(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              vertical: 8,
+                              horizontal: 3,
+                            ),
+                            child: SecondaryButton(
+                              onTap: () {
+                                data.logout();
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
               ),
             ],
           ),

@@ -1,11 +1,28 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:real_estate/controller/route_controller.dart';
+import 'package:real_estate/utils/manager/loading_manager.dart';
+import 'package:real_estate/utils/manager/toast_manager.dart';
 
 import '../../utils/c_extensions.dart';
 import '../textbox/vm_textbox.dart';
 
 class VMLogin extends GetxController {
   final formKey = GlobalKey<FormState>();
+
+  RxBool isLoggedIn = RxBool(false);
+
+  @override
+  void onInit() {
+    // TODO: implement onInit
+    super.onInit();
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      print(user);
+      isLoggedIn.value = user != null;
+    });
+  }
+
   final name = VMTextBox(
     placeholder: 'Full Name',
     keyboardType: TextInputType.text,
@@ -19,9 +36,88 @@ class VMLogin extends GetxController {
     keyboardType: TextInputType.visiblePassword,
   );
 
-  bool validate({bool withOTP = true}) {
+  bool validate({bool withName = false}) {
     hideKeyboard();
-
+    if (!emailId.text.trim().isEmail) {
+      ToastManager.shared.show("Please enter valid emailId!");
+      return false;
+    }
+    if (withName) {
+      if (name.text.trim().isEmpty) {
+        ToastManager.shared.show("Please enter your name!");
+        return false;
+      }
+    }
+    if (password.text.trim().length < 6) {
+      ToastManager.shared.show("Password should be about 6 characters!");
+      return false;
+    }
     return true;
+  }
+
+  login() async {
+    if (validate()) {
+      LoadingManager.shared.showLoading();
+      try {
+        final credential =
+            await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailId.text,
+          password: password.text,
+        );
+        await FirebaseAuth.instance.currentUser?.reload();
+        print(credential);
+        Get.back();
+      } on FirebaseAuthException catch (e) {
+        print(e.code);
+        if (e.code == 'user-not-found') {
+          ToastManager.shared.show("No user found for that email.");
+        } else if (e.code == 'wrong-password') {
+          ToastManager.shared.show("Wrong password provided for that user.");
+        }
+      } catch (e) {
+        print(e);
+      } finally {
+        LoadingManager.shared.hideLoading();
+      }
+    }
+  }
+
+  signUp() async {
+    if (validate(withName: true)) {
+      LoadingManager.shared.showLoading();
+      try {
+        final credential =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: emailId.text,
+          password: password.text,
+        );
+        User? user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          await user.updateDisplayName(name.text);
+          await user.reload();
+          print(FirebaseAuth.instance.currentUser);
+        }
+        Get.back();
+      } on FirebaseAuthException catch (e) {
+        print(e.code);
+        if (e.code == 'weak-password') {
+          ToastManager.shared.show("The password provided is too weak.");
+        } else if (e.code == 'email-already-in-use') {
+          ToastManager.shared
+              .show("The account already exists for that email.");
+        }
+      } catch (e) {
+        print(e);
+      } finally {
+        LoadingManager.shared.hideLoading();
+      }
+    }
+  }
+
+  logout() async {
+    await FirebaseAuth.instance.signOut();
+    await FirebaseAuth.instance.currentUser?.reload();
+
+    RouteController.to.currentPos.value = 0;
   }
 }

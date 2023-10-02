@@ -1,3 +1,4 @@
+import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:real_estate/screens/login/vm_login.dart';
@@ -5,6 +6,7 @@ import 'package:real_estate/utils/manager/font_manager.dart';
 import 'package:real_estate/utils/resizer/fetch_pixels.dart';
 import 'package:real_estate/widget/buttons/primary_button.dart';
 
+import '../../utils/manager/color_manager.dart';
 import '../../widget/widget_utils.dart';
 import '../textbox/first_textbox.dart';
 
@@ -13,10 +15,11 @@ class LoginScreen extends StatelessWidget {
 
   LoginScreen({this.onDone});
 
+  RxBool selectedTab = RxBool(true);
+
   @override
   Widget build(BuildContext context) {
     final data = Get.find<VMLogin>();
-
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -43,24 +46,69 @@ class LoginScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      getCustomFont(
-                        "Welcome",
-                        22,
-                        Colors.black,
-                        1,
-                        fontWeight: bold,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: getCustomFont(
+                              "Welcome",
+                              22,
+                              Colors.black,
+                              1,
+                              fontWeight: bold,
+                            ),
+                          ),
+                          Expanded(
+                            child: Obx(
+                              () => AnimatedToggleSwitch<bool>.size(
+                                current: selectedTab.value,
+                                values: const [true, false],
+                                indicatorSize:
+                                    const Size.fromWidth(double.infinity),
+                                customIconBuilder: (context, local, global) =>
+                                    Text(
+                                  (local.value ? 'Login' : 'Sign Up').tr,
+                                  style: TextStyle(
+                                    color: Color.lerp(
+                                      Colors.black,
+                                      Colors.black,
+                                      local.animationValue,
+                                    ),
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                borderWidth: 5.0,
+                                iconAnimationType: AnimationType.onSelected,
+                                style: ToggleStyle(
+                                  indicatorColor: white,
+                                  backgroundColor: Color(0xFFebebec),
+                                  borderColor: Colors.transparent,
+                                  borderRadius: BorderRadius.circular(13.0),
+                                ),
+                                selectedIconScale: 1.0,
+                                height: 45,
+                                onChanged: (b) {
+                                  selectedTab.value = b;
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 16),
                       FirstTextBox(
                         data: data.emailId,
                       ),
-                      Column(
-                        children: [
-                          vSpace(16),
-                          FirstTextBox(
-                            data: data.name,
-                          ),
-                        ],
+                      Obx(
+                        () => selectedTab.value
+                            ? Container()
+                            : Column(
+                                children: [
+                                  vSpace(16),
+                                  FirstTextBox(
+                                    data: data.name,
+                                  ),
+                                ],
+                              ),
                       ),
                       const SizedBox(height: 16),
                       FirstTextBox(
@@ -71,7 +119,19 @@ class LoginScreen extends StatelessWidget {
                       Row(
                         children: [
                           Expanded(
-                            child: PrimaryButton("Login", radius: 10),
+                            child: Obx(
+                              () => PrimaryButton(
+                                !selectedTab.value ? "Sign Up" : "Login",
+                                radius: 10,
+                                onTap: () {
+                                  if (!selectedTab.value) {
+                                    data.signUp();
+                                  } else {
+                                    data.login();
+                                  }
+                                },
+                              ),
+                            ),
                           ),
                         ],
                       ),

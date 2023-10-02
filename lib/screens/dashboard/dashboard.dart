@@ -11,6 +11,8 @@ import 'package:real_estate/widget/widget_utils.dart';
 
 import '../../utils/manager/color_manager.dart';
 import '../../utils/resizer/fetch_pixels.dart';
+import '../login/login_screen.dart';
+import '../login/vm_login.dart';
 import '../your_places/your_places.dart';
 
 class Dashboard extends StatelessWidget {
@@ -33,7 +35,7 @@ class Dashboard extends StatelessWidget {
     RouteController routeController = Get.find();
     return ZoomDrawer(
       controller: RouteController.to.zoomDrawerController,
-      menuScreen: const CDrawer(),
+      menuScreen: CDrawer(),
       borderRadius: 24.0,
       showShadow: false,
       angle: 0.0,
@@ -59,6 +61,7 @@ class Dashboard extends StatelessWidget {
   }
 
   Container buildBottomBar(double size, double iconSize) {
+    final data = Get.find<VMLogin>();
     RouteController routeController = Get.find();
     return Container(
         height: FetchPixels.getPixelHeight(80),
@@ -80,7 +83,15 @@ class Dashboard extends StatelessWidget {
               flex: 1,
               child: GestureDetector(
                 onTap: () {
-                  routeController.currentPos.value = index;
+                  if (index == 1 || index == 2) {
+                    if (data.isLoggedIn.value) {
+                      routeController.currentPos.value = index;
+                    } else {
+                      openSignInAlert();
+                    }
+                  } else {
+                    routeController.currentPos.value = index;
+                  }
                 },
                 child: Center(
                   child: Container(

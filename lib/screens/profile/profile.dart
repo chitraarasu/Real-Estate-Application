@@ -9,6 +9,7 @@ import '../../utils/resizer/fetch_pixels.dart';
 import '../../widget/appbar/common_appbar.dart';
 import '../../widget/buttons/secondary_button.dart';
 import '../../widget/widget_utils.dart';
+import '../login/vm_login.dart';
 
 class Profile extends StatelessWidget {
   Profile({super.key});
@@ -40,6 +41,7 @@ class Profile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final data = Get.find<VMLogin>();
     double radius = FetchPixels.getPixelWidth(55);
     return WillPopScope(
       onWillPop: () async {
@@ -209,6 +211,9 @@ class Profile extends StatelessWidget {
                     child: SecondaryButton(
                       isFromProfile: true,
                       color: darkGrey,
+                      onTap: () {
+                        data.logout();
+                      },
                     ),
                   ),
                 ],

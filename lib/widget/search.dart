@@ -14,13 +14,14 @@ class Search extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: FetchPixels.getPixelHeight(40),
-      decoration: const BoxDecoration(
-        color: Color(0xFFebebec),
-        borderRadius: BorderRadius.all(
-          Radius.circular(10.0),
-        ),
-      ),
-      child: Center(
+      // decoration: const BoxDecoration(
+      //   color: Color(0xFFebebec),
+      //   borderRadius: BorderRadius.all(
+      //     Radius.circular(10.0),
+      //   ),
+      // ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
         child: TextField(
           onTapOutside: (event) {
             FocusManager.instance.primaryFocus?.unfocus();
@@ -36,7 +37,9 @@ class Search extends StatelessWidget {
               color: darkGrey,
             ),
             border: InputBorder.none,
-            contentPadding: EdgeInsets.symmetric(vertical: 2.5),
+            filled: true,
+            fillColor: Color(0xFFebebec),
+            // contentPadding: EdgeInsets.symmetric(vertical: 2.5),
             prefixIcon: Icon(
               Icons.search,
               color: darkGrey,

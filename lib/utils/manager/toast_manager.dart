@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/src/rx_workers/utils/debouncer.dart';
+import 'package:real_estate/utils/manager/font_manager.dart';
 
 import 'color_manager.dart';
 
@@ -35,7 +36,9 @@ class ToastManager {
 
 class ToastView extends StatelessWidget {
   const ToastView({super.key, required this.msg});
+
   final String msg;
+
   @override
   Widget build(BuildContext context) {
     return IgnorePointer(
@@ -50,7 +53,7 @@ class ToastView extends StatelessWidget {
               child: Container(
                 constraints: const BoxConstraints(minWidth: 250),
                 decoration: BoxDecoration(
-                  color: black.withOpacity(0.9),
+                  color: darkBlue.withOpacity(0.9),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 padding:
@@ -60,6 +63,8 @@ class ToastView extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 16,
+                    fontWeight: bold,
+                    color: Colors.white,
                   ),
                 ),
               ),

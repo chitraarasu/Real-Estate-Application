@@ -9,8 +9,9 @@ class PrimaryButton extends StatelessWidget {
   final String title;
   final double? radius;
   final EdgeInsets? padding;
+  final Function()? onTap;
 
-  PrimaryButton(this.title, {this.radius, this.padding});
+  PrimaryButton(this.title, {this.radius, this.padding, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +24,7 @@ class PrimaryButton extends StatelessWidget {
         ),
         textStyle: const TextStyle(color: Colors.white),
       ),
-      onPressed: () {},
+      onPressed: onTap,
       child: getPaddingWidget(
         padding ??
             EdgeInsets.symmetric(

@@ -22,8 +22,6 @@ class AddNewPlace extends StatelessWidget {
   RxBool selectedWay = RxBool(true);
   RxBool selectedMap = RxBool(true);
 
-  Rx<List<Marker>> customMarkers = Rx([]);
-
   Marker buildPin(LatLng point) => Marker(
         point: point,
         builder: (ctx) => Image(
@@ -194,66 +192,119 @@ class AddNewPlace extends StatelessWidget {
                         ],
                       ),
                       vSpace(15),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: getCustomFont(
-                              "Select Images",
-                              14,
-                              darkGrey,
-                              1,
-                            ),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: darkGrey,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: getPaddingWidget(
-                              EdgeInsets.all(4),
-                              child: Icon(
-                                Icons.add,
-                                color: white,
-                              ),
-                            ),
-                          ),
-                        ],
+                      TextPlusPicker(
+                        text: 'Select Land Document',
+                        onTap: () {
+                          data.pickDocument();
+                        },
                       ),
                       vSpace(10),
-                      SizedBox(
-                        height: FetchPixels.getPixelHeight(85),
-                        child: ReorderableListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: 10,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Container(
-                              key: ValueKey(index),
-                              child: getPaddingWidget(
-                                EdgeInsets.all(2),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Stack(
-                                    alignment: Alignment.topRight,
-                                    children: [
-                                      Image(
-                                        width: FetchPixels.getPixelWidth(150),
-                                        fit: BoxFit.cover,
-                                        image: NetworkImage(
-                                          "https://via.placeholder.com/400x500",
-                                        ),
+                      Obx(
+                        () => data.selectedPdf.value == null
+                            ? Container()
+                            : Column(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFD33B35),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: getPaddingWidget(
+                                      EdgeInsets.symmetric(
+                                        vertical:
+                                            FetchPixels.getPixelHeight(10),
+                                        horizontal:
+                                            FetchPixels.getPixelWidth(15),
                                       ),
-                                      getPaddingWidget(EdgeInsets.all(2),
-                                          child: Icon(Icons.close)),
-                                    ],
+                                      child: Row(
+                                        children: [
+                                          getCustomFont(
+                                            "Land Documents",
+                                            15,
+                                            Colors.white,
+                                            1,
+                                          ),
+                                          Spacer(),
+                                          Icon(
+                                            Icons.picture_as_pdf,
+                                            color: Colors.white,
+                                          ),
+                                          SizedBox(
+                                            width: 4,
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              data.selectedPdf.value = null;
+                                            },
+                                            child: Icon(
+                                              Icons.close,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                  vSpace(15),
+                                ],
                               ),
-                            );
-                          },
-                          onReorder: (int oldIndex, int newIndex) {},
-                        ),
                       ),
-                      vSpace(15),
+                      TextPlusPicker(
+                        text: "Select Images",
+                        onTap: () {
+                          data.pickImages();
+                        },
+                      ),
+                      vSpace(10),
+                      Obx(
+                        () => data.selectedImages.value.isEmpty
+                            ? Container()
+                            : Column(
+                                children: [
+                                  SizedBox(
+                                    height: FetchPixels.getPixelHeight(85),
+                                    child: ReorderableListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: 10,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return Container(
+                                          key: ValueKey(index),
+                                          child: getPaddingWidget(
+                                            const EdgeInsets.all(2),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              child: Stack(
+                                                alignment: Alignment.topRight,
+                                                children: [
+                                                  Image(
+                                                    width: FetchPixels
+                                                        .getPixelWidth(150),
+                                                    fit: BoxFit.cover,
+                                                    image: const NetworkImage(
+                                                      "https://via.placeholder.com/400x500",
+                                                    ),
+                                                  ),
+                                                  getPaddingWidget(
+                                                    const EdgeInsets.all(2),
+                                                    child:
+                                                        const Icon(Icons.close),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      onReorder:
+                                          (int oldIndex, int newIndex) {},
+                                    ),
+                                  ),
+                                  vSpace(15),
+                                ],
+                              ),
+                      ),
                       FirstTextBox(
                         data: data.description,
                         maxLines: 6,
@@ -292,7 +343,7 @@ class AddNewPlace extends StatelessWidget {
                           iconAnimationType: AnimationType.onSelected,
                           style: ToggleStyle(
                             indicatorColor: white,
-                            backgroundColor: Color(0xFFebebec),
+                            backgroundColor: const Color(0xFFebebec),
                             borderColor: Colors.transparent,
                             borderRadius: BorderRadius.circular(10.0),
                           ),
@@ -311,10 +362,10 @@ class AddNewPlace extends StatelessWidget {
                           child: Obx(
                             () => FlutterMap(
                               options: MapOptions(
-                                  center: LatLng(20.5937, 78.9629),
+                                  center: const LatLng(20.5937, 78.9629),
                                   zoom: 5,
                                   onTap: (_, p) {
-                                    customMarkers.value = [buildPin(p)];
+                                    data.customMarkers.value = [buildPin(p)];
                                   }),
                               children: [
                                 TileLayer(
@@ -322,7 +373,7 @@ class AddNewPlace extends StatelessWidget {
                                       'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                                   userAgentPackageName: 'com.example.app',
                                 ),
-                                MarkerLayer(
+                                const MarkerLayer(
                                   markers: [
                                     // Marker(
                                     //   point: LatLng(14.059274, 76.385020),
@@ -336,7 +387,7 @@ class AddNewPlace extends StatelessWidget {
                                   ],
                                 ),
                                 MarkerLayer(
-                                  markers: customMarkers.value,
+                                  markers: data.customMarkers.value,
                                   rotate: false,
                                 ),
                               ],
@@ -351,6 +402,9 @@ class AddNewPlace extends StatelessWidget {
                             child: PrimaryButton(
                               "Send For Approval",
                               radius: 10,
+                              onTap: () {
+                                data.validate();
+                              },
                             ),
                           ),
                         ],
@@ -364,6 +418,45 @@ class AddNewPlace extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class TextPlusPicker extends StatelessWidget {
+  final String text;
+  final Function() onTap;
+
+  const TextPlusPicker({super.key, required this.text, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: getCustomFont(
+            text,
+            14,
+            darkGrey,
+            1,
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: darkGrey,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: GestureDetector(
+            onTap: onTap,
+            child: getPaddingWidget(
+              const EdgeInsets.all(4),
+              child: const Icon(
+                Icons.add,
+                color: white,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

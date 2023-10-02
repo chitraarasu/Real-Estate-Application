@@ -4,6 +4,7 @@ import 'package:real_estate/utils/c_extensions.dart';
 
 import '../../controller/route_controller.dart';
 import '../../screens/your_places/add_new_place.dart';
+import '../../screens/your_places/vm_new_place.dart';
 import '../../utils/manager/color_manager.dart';
 import '../../utils/resizer/fetch_pixels.dart';
 
@@ -15,7 +16,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Function()? onEditClick;
   final Function()? onDoneClick;
 
-  const CommonAppBar({
+  CommonAppBar({
     super.key,
     this.isHome = false,
     this.isMyPlace = false,
@@ -24,6 +25,8 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.onEditClick,
     this.onDoneClick,
   });
+
+  final data = Get.find<VMNewPlace>();
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +69,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
               child: IconButton(
                 onPressed: () {
                   Get.to(() => AddNewPlace());
+                  data.determinePosition();
                 },
                 icon: Icon(
                   Icons.add_box_rounded,

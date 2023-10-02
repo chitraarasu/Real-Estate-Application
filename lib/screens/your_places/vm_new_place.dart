@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:real_estate/utils/manager/toast_manager.dart';
 
@@ -14,6 +15,7 @@ class VMNewPlace extends GetxController {
   Rx<List<Marker>> customMarkers = Rx([]);
   Rxn<File> selectedPdf = Rxn<File>();
   Rx<List<File>> selectedImages = Rx<List<File>>([]);
+  Position? currentLocation;
 
   pickDocument() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -28,12 +30,25 @@ class VMNewPlace extends GetxController {
   pickImages() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.image,
+      allowMultiple: true,
     );
     if (result != null) {
-      result.files.map((e) {
-        selectedImages.value.add(File(e.path!));
-      });
+      for (var e in result.files) {
+        selectedImages.value.insert(0, File(e.path!));
+      }
+      selectedImages.refresh();
     } else {}
+  }
+
+  reOrderImage(oldIndex, newIndex) {
+    File removedFile = selectedImages.value.removeAt(oldIndex);
+    selectedImages.value.insert(newIndex, removedFile);
+    selectedImages.refresh();
+  }
+
+  removeImage(index) {
+    selectedImages.value.removeAt(index);
+    selectedImages.refresh();
   }
 
   final name = VMTextBox(
@@ -120,6 +135,14 @@ class VMNewPlace extends GetxController {
       ToastManager.shared.show("Please enter valid sqft!");
       return false;
     }
+    if (selectedPdf.value == null) {
+      ToastManager.shared.show("Please select land document for validation!");
+      return false;
+    }
+    if (selectedImages.value.isEmpty) {
+      ToastManager.shared.show("Please select place images!");
+      return false;
+    }
     if (description.text.trim().isEmpty) {
       ToastManager.shared.show("Please enter description!");
       return false;
@@ -129,5 +152,30 @@ class VMNewPlace extends GetxController {
       return false;
     }
     return true;
+  }
+
+  Future determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      ToastManager.shared.show("Location services are disabled.");
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        ToastManager.shared.show("Location permissions are denied.");
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      ToastManager.shared.show(
+          "Location permissions are permanently denied, we cannot request permissions.");
+    }
+
+    currentLocation = await Geolocator.getCurrentPosition();
+    print(currentLocation);
   }
 }

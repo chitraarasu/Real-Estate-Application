@@ -18,7 +18,7 @@ class YourPlaces extends StatelessWidget {
         return false;
       },
       child: Scaffold(
-        appBar: const CommonAppBar(isMyPlace: true),
+        appBar: CommonAppBar(isMyPlace: true),
         body: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.symmetric(

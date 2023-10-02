@@ -29,6 +29,8 @@ class AddNewPlace extends StatelessWidget {
         ),
       );
 
+  MapController _mapController = MapController();
+
   @override
   Widget build(BuildContext context) {
     final data = Get.find<VMNewPlace>();
@@ -265,7 +267,8 @@ class AddNewPlace extends StatelessWidget {
                                     height: FetchPixels.getPixelHeight(85),
                                     child: ReorderableListView.builder(
                                       scrollDirection: Axis.horizontal,
-                                      itemCount: 10,
+                                      itemCount:
+                                          data.selectedImages.value.length,
                                       itemBuilder:
                                           (BuildContext context, int index) {
                                         return Container(
@@ -282,14 +285,31 @@ class AddNewPlace extends StatelessWidget {
                                                     width: FetchPixels
                                                         .getPixelWidth(150),
                                                     fit: BoxFit.cover,
-                                                    image: const NetworkImage(
-                                                      "https://via.placeholder.com/400x500",
-                                                    ),
+                                                    image: FileImage(data
+                                                        .selectedImages
+                                                        .value[index]),
                                                   ),
-                                                  getPaddingWidget(
-                                                    const EdgeInsets.all(2),
-                                                    child:
-                                                        const Icon(Icons.close),
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      data.removeImage(index);
+                                                    },
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        color: white
+                                                            .withOpacity(.7),
+                                                        borderRadius:
+                                                            BorderRadius.only(
+                                                          bottomLeft:
+                                                              Radius.circular(
+                                                                  10),
+                                                        ),
+                                                      ),
+                                                      child: getPaddingWidget(
+                                                        const EdgeInsets.all(2),
+                                                        child: const Icon(
+                                                            Icons.close),
+                                                      ),
+                                                    ),
                                                   ),
                                                 ],
                                               ),
@@ -297,8 +317,9 @@ class AddNewPlace extends StatelessWidget {
                                           ),
                                         );
                                       },
-                                      onReorder:
-                                          (int oldIndex, int newIndex) {},
+                                      onReorder: (int oldIndex, int newIndex) {
+                                        data.reOrderImage(oldIndex, newIndex);
+                                      },
                                     ),
                                   ),
                                   vSpace(15),
@@ -328,8 +349,8 @@ class AddNewPlace extends StatelessWidget {
                           indicatorSize: const Size.fromWidth(double.infinity),
                           customIconBuilder: (context, local, global) => Text(
                             (local.value
-                                ? 'Use Current Location'
-                                : 'Pick From Map'),
+                                ? 'Pick From Map'
+                                : 'Use Current Location'),
                             style: TextStyle(
                               color: Color.lerp(
                                 Colors.black,
@@ -351,6 +372,26 @@ class AddNewPlace extends StatelessWidget {
                           height: 40,
                           onChanged: (b) {
                             selectedMap.value = b;
+                            data.customMarkers.value = [];
+                            if (!selectedMap.value) {
+                              data.determinePosition();
+                              if (data.currentLocation != null) {
+                                data.customMarkers.value = [
+                                  buildPin(LatLng(
+                                    data.currentLocation!.latitude,
+                                    data.currentLocation!.longitude,
+                                  ))
+                                ];
+                                data.customMarkers.refresh();
+                                _mapController.move(
+                                  LatLng(
+                                    data.currentLocation!.latitude,
+                                    data.currentLocation!.longitude,
+                                  ),
+                                  8,
+                                );
+                              }
+                            }
                           },
                         ),
                       ),
@@ -361,11 +402,15 @@ class AddNewPlace extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                           child: Obx(
                             () => FlutterMap(
+                              mapController: _mapController,
                               options: MapOptions(
                                   center: const LatLng(20.5937, 78.9629),
                                   zoom: 5,
                                   onTap: (_, p) {
-                                    data.customMarkers.value = [buildPin(p)];
+                                    print(p);
+                                    if (selectedMap.value) {
+                                      data.customMarkers.value = [buildPin(p)];
+                                    }
                                   }),
                               children: [
                                 TileLayer(

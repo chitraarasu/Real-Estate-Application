@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:real_estate/screens/profile/manage_places.dart';
+import 'package:real_estate/utils/c_extensions.dart';
 
 import '../../controller/route_controller.dart';
 import '../../utils/manager/color_manager.dart';
@@ -42,6 +44,8 @@ class Profile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final data = Get.find<VMLogin>();
+    data.selectedImages.value = null;
+    User? userData = FirebaseAuth.instance.currentUser;
     double radius = FetchPixels.getPixelWidth(55);
     return WillPopScope(
       onWillPop: () async {
@@ -57,7 +61,7 @@ class Profile extends StatelessWidget {
               isEditMode.value = true;
             },
             onDoneClick: () {
-              isEditMode.value = false;
+              data.updateProfile(() => isEditMode.value = false);
             },
           ),
         ),
@@ -101,7 +105,7 @@ class Profile extends StatelessWidget {
                               children: [
                                 vSpace(radius),
                                 getCustomFont(
-                                  "Mariya Elliott",
+                                  userData?.displayName ?? "",
                                   18,
                                   Colors.black,
                                   1,
@@ -109,7 +113,7 @@ class Profile extends StatelessWidget {
                                 ),
                                 vSpace(5),
                                 getCustomFont(
-                                  "test@gmail.com",
+                                  userData?.email ?? "",
                                   14,
                                   darkGrey,
                                   1,
@@ -141,13 +145,29 @@ class Profile extends StatelessWidget {
                                   CircleAvatar(
                                     radius: radius,
                                     backgroundColor: grey,
-                                    backgroundImage: const NetworkImage(
-                                      "https://via.placeholder.com/400x400",
-                                    ),
+                                    backgroundImage: (data
+                                                .selectedImages.value !=
+                                            null
+                                        ? FileImage(data.selectedImages.value!)
+                                        : userData?.photoURL == null
+                                            ? null
+                                            : NetworkImage(
+                                                userData?.photoURL ?? "",
+                                              )) as ImageProvider<Object>?,
+                                    child: data.selectedImages.value != null
+                                        ? null
+                                        : userData?.photoURL == null
+                                            ? Image(
+                                                image: AssetImage(
+                                                    "profile_dummy".png),
+                                              )
+                                            : null,
                                   ),
                                   if (isEditMode.value)
                                     IconButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        data.pickImages();
+                                      },
                                       icon: CircleAvatar(
                                         child: Icon(
                                           Icons.edit,
@@ -210,6 +230,9 @@ class Profile extends StatelessWidget {
                   Expanded(
                     child: SecondaryButton(
                       isFromProfile: true,
+                      padding: EdgeInsets.symmetric(
+                        vertical: FetchPixels.getPixelHeight(10),
+                      ),
                       color: darkGrey,
                       onTap: () {
                         data.logout();

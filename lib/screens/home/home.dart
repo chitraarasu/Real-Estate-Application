@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:real_estate/screens/home/search_screen.dart';
@@ -11,6 +12,7 @@ import '../../controller/route_controller.dart';
 import '../../widget/appbar/common_appbar.dart';
 import '../../widget/category_chip.dart';
 import '../../widget/home_card.dart';
+import '../login/vm_login.dart';
 import 'home_list.dart';
 
 class Home extends StatelessWidget {
@@ -50,6 +52,7 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     RouteController routeController = Get.find();
+    final vmLoginData = Get.find<VMLogin>();
     return Scaffold(
       appBar: CommonAppBar(isHome: true),
       body: SingleChildScrollView(
@@ -62,12 +65,14 @@ class Home extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              getCustomFont(
-                "Hi, There!",
-                20,
-                Colors.black,
-                1,
-                fontWeight: bold,
+              Obx(
+                () => getCustomFont(
+                  "Hi, ${vmLoginData.isLoggedIn.value ? "${FirebaseAuth.instance.currentUser?.displayName?.capitalizeFirst ?? "There"} !" : "There !"}",
+                  20,
+                  Colors.black,
+                  1,
+                  fontWeight: bold,
+                ),
               ),
               vSpace(15),
               GestureDetector(

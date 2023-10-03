@@ -5,6 +5,7 @@ import 'package:real_estate/utils/c_extensions.dart';
 import 'package:real_estate/widget/widget_utils.dart';
 
 import '../screens/home/home_detail_view.dart';
+import '../screens/login/vm_login.dart';
 import '../utils/manager/color_manager.dart';
 import '../utils/manager/font_manager.dart';
 import '../utils/resizer/fetch_pixels.dart';
@@ -41,10 +42,13 @@ class HomeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final vmLoginData = Get.find<VMLogin>();
+
     return GestureDetector(
       onTap: () {
         if (onTap == null) {
-          Get.to(() => HomeDetailView(
+          Get.to(() =>
+              HomeDetailView(
                 isManagePlaceList: isManagePlaceList,
               ));
         } else {
@@ -53,7 +57,7 @@ class HomeCard extends StatelessWidget {
       },
       child: Container(
         width:
-            isDetailedList ? double.infinity : FetchPixels.getPixelWidth(210),
+        isDetailedList ? double.infinity : FetchPixels.getPixelWidth(210),
         height: isDetailedList
             ? FetchPixels.getPixelHeight(isMyPlaceList ? 220 : 240)
             : double.infinity,
@@ -68,7 +72,7 @@ class HomeCard extends StatelessWidget {
                 children: [
                   Container(
                     height:
-                        FetchPixels.getPixelHeight(isDetailedList ? 125 : 110),
+                    FetchPixels.getPixelHeight(isDetailedList ? 125 : 110),
                     color: grey,
                     child: Image(
                       image: NetworkImage(
@@ -83,7 +87,8 @@ class HomeCard extends StatelessWidget {
                     Align(
                       alignment: Alignment.topRight,
                       child: PopupMenuButton<int>(
-                        itemBuilder: (context) => [
+                        itemBuilder: (context) =>
+                        [
                           PopupMenuItem(
                             value: 1,
                             child: Row(
@@ -143,7 +148,11 @@ class HomeCard extends StatelessWidget {
                         padding: const EdgeInsets.all(6),
                         child: GestureDetector(
                           onTap: () {
-                            openSignInAlert();
+                            if (vmLoginData.isLoggedIn.value) {
+
+                            } else {
+                              openSignInAlert();
+                            }
                           },
                           child: CircleAvatar(
                             backgroundColor: white.withOpacity(.7),
@@ -187,7 +196,7 @@ class HomeCard extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.only(
                     right:
-                        FetchPixels.getPixelWidth(isDetailedList ? 0 : 17.0)),
+                    FetchPixels.getPixelWidth(isDetailedList ? 0 : 17.0)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -206,25 +215,26 @@ class HomeCard extends StatelessWidget {
                             onTap: () {
                               showDialog(
                                 context: context,
-                                builder: (ctx) => AlertDialog(
-                                  title: getCustomFont(
-                                    "Reason for rejection!",
-                                    18,
-                                    Colors.redAccent,
-                                    1,
-                                    fontWeight: bold,
-                                  ),
-                                  content: SingleChildScrollView(
-                                    child: getCustomFont(
-                                      "Lorem Ipsum is simply dummy unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-                                      14,
-                                      darkGrey,
-                                      1000,
-                                      fontWeight: semiBold,
-                                      textAlign: TextAlign.justify,
+                                builder: (ctx) =>
+                                    AlertDialog(
+                                      title: getCustomFont(
+                                        "Reason for rejection!",
+                                        18,
+                                        Colors.redAccent,
+                                        1,
+                                        fontWeight: bold,
+                                      ),
+                                      content: SingleChildScrollView(
+                                        child: getCustomFont(
+                                          "Lorem Ipsum is simply dummy unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+                                          14,
+                                          darkGrey,
+                                          1000,
+                                          fontWeight: semiBold,
+                                          textAlign: TextAlign.justify,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
                               );
                             },
                             child: Container(
@@ -279,7 +289,7 @@ class HomeCard extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(right: 4.0),
                           child:
-                              getIconText(Icons.width_wide_outlined, "4 sqft"),
+                          getIconText(Icons.width_wide_outlined, "4 sqft"),
                         ),
                       ],
                     ),

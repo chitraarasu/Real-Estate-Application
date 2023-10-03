@@ -10,6 +10,8 @@ import '../../utils/manager/color_manager.dart';
 import '../../utils/resizer/fetch_pixels.dart';
 import '../../widget/buttons/primary_button.dart';
 import '../../widget/widget_utils.dart';
+import '../login/login_screen.dart';
+import '../login/vm_login.dart';
 import '../textbox/first_textbox.dart';
 import '../textbox/vm_textbox.dart';
 
@@ -107,6 +109,7 @@ class HomeDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final vmLoginData = Get.find<VMLogin>();
     EdgeInsets edgeInsets = EdgeInsets.symmetric(horizontal: 15);
 
     return Scaffold(
@@ -124,7 +127,12 @@ class HomeDetailView extends StatelessWidget {
                         : Row(
                             children: [
                               IconButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  if (vmLoginData.isLoggedIn.value) {
+                                  } else {
+                                    openSignInAlert();
+                                  }
+                                },
                                 icon: Image.asset(
                                   "heart".png,
                                   width: FetchPixels.getPixelWidth(20),

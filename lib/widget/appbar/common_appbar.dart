@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:real_estate/utils/c_extensions.dart';
 
 import '../../controller/route_controller.dart';
+import '../../screens/login/login_screen.dart';
+import '../../screens/login/vm_login.dart';
 import '../../screens/your_places/add_new_place.dart';
 import '../../screens/your_places/vm_new_place.dart';
 import '../../utils/manager/color_manager.dart';
@@ -30,6 +32,8 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final vmLoginData = Get.find<VMLogin>();
+
     return AppBar(
       elevation: 0,
       backgroundColor: Colors.transparent,
@@ -49,7 +53,11 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
             padding: const EdgeInsets.only(right: 8.0),
             child: IconButton(
               onPressed: () {
-                RouteController.to.currentPos.value = 3;
+                if (vmLoginData.isLoggedIn.value) {
+                  RouteController.to.currentPos.value = 3;
+                } else {
+                  openSignInAlert();
+                }
               },
               icon: ImageIcon(
                 AssetImage("heart".png),

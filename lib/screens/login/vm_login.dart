@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:real_estate/controller/route_controller.dart';
@@ -12,6 +16,7 @@ class VMLogin extends GetxController {
   final formKey = GlobalKey<FormState>();
 
   RxBool isLoggedIn = RxBool(false);
+  Rxn<File> selectedImages = Rxn<File>();
 
   @override
   void onInit() {
@@ -38,21 +43,66 @@ class VMLogin extends GetxController {
 
   bool validate({bool withName = false}) {
     hideKeyboard();
-    if (!emailId.text.trim().isEmail) {
+    if (!emailId.text
+        .trim()
+        .isEmail) {
       ToastManager.shared.show("Please enter valid emailId!");
       return false;
     }
     if (withName) {
-      if (name.text.trim().isEmpty) {
+      if (name.text
+          .trim()
+          .isEmpty) {
         ToastManager.shared.show("Please enter your name!");
         return false;
       }
     }
-    if (password.text.trim().length < 6) {
+    if (password.text
+        .trim()
+        .length < 6) {
       ToastManager.shared.show("Password should be about 6 characters!");
       return false;
     }
     return true;
+  }
+
+  pickImages() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+    );
+    if (result != null) {
+      selectedImages.value = File(result.files.first.path!);
+      selectedImages.refresh();
+    } else {}
+  }
+
+  updateProfile(Function() onDone) async {
+    if (selectedImages.value != null) {
+      try {
+        LoadingManager.shared.showLoading();
+        User? user = FirebaseAuth.instance.currentUser;
+        Reference storageReference = FirebaseStorage.instance
+            .ref()
+            .child('user_profile/${user?.uid}.png');
+
+        UploadTask uploadTask = storageReference.putFile(selectedImages.value!);
+
+        await uploadTask.whenComplete(() async {
+          String imageUrl = await storageReference.getDownloadURL();
+          print('Image URL: $imageUrl');
+          await user?.updatePhotoURL(imageUrl);
+          await user?.reload();
+          onDone();
+        });
+      } catch (e) {
+        ToastManager.shared.show("Something went wrong!");
+        print('Error uploading image: $e');
+      } finally {
+        LoadingManager.shared.hideLoading();
+      }
+    } else {
+      onDone();
+    }
   }
 
   login() async {
@@ -60,13 +110,17 @@ class VMLogin extends GetxController {
       LoadingManager.shared.showLoading();
       try {
         final credential =
-            await FirebaseAuth.instance.signInWithEmailAndPassword(
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailId.text,
           password: password.text,
         );
         await FirebaseAuth.instance.currentUser?.reload();
         print(credential);
         Get.back();
+
+        emailId.controller.clear();
+        password.controller.clear();
+        name.controller.clear();
       } on FirebaseAuthException catch (e) {
         print(e.code);
         if (e.code == 'user-not-found') {
@@ -87,7 +141,7 @@ class VMLogin extends GetxController {
       LoadingManager.shared.showLoading();
       try {
         final credential =
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailId.text,
           password: password.text,
         );
@@ -97,7 +151,12 @@ class VMLogin extends GetxController {
           await user.reload();
           print(FirebaseAuth.instance.currentUser);
         }
+
         Get.back();
+
+        emailId.controller.clear();
+        password.controller.clear();
+        name.controller.clear();
       } on FirebaseAuthException catch (e) {
         print(e.code);
         if (e.code == 'weak-password') {

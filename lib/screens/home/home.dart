@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:real_estate/screens/home/search_screen.dart';
@@ -67,7 +66,7 @@ class Home extends StatelessWidget {
             children: [
               Obx(
                 () => getCustomFont(
-                  "Hi, ${vmLoginData.isLoggedIn.value ? "${FirebaseAuth.instance.currentUser?.displayName?.capitalizeFirst ?? "There"} !" : "There !"}",
+                  "Hi, ${vmLoginData.loggedInUser.value != null ? "${vmLoginData.loggedInUser.value?.displayName?.capitalizeFirst ?? "There"} !" : "There !"}",
                   20,
                   Colors.black,
                   1,

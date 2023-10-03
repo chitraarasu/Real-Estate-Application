@@ -448,7 +448,7 @@ class AddNewPlace extends StatelessWidget {
                               "Send For Approval",
                               radius: 10,
                               onTap: () {
-                                data.validate();
+                                data.storePlaceDate(selectedWay.value);
                               },
                             ),
                           ),

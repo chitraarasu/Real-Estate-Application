@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -17,6 +18,7 @@ class VMLogin extends GetxController {
 
   RxBool isLoggedIn = RxBool(false);
   Rxn<File> selectedImages = Rxn<File>();
+  Rxn<User> loggedInUser = Rxn();
 
   @override
   void onInit() {
@@ -24,6 +26,7 @@ class VMLogin extends GetxController {
     super.onInit();
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       print(user);
+      loggedInUser.value = user;
       isLoggedIn.value = user != null;
     });
   }
@@ -43,23 +46,17 @@ class VMLogin extends GetxController {
 
   bool validate({bool withName = false}) {
     hideKeyboard();
-    if (!emailId.text
-        .trim()
-        .isEmail) {
+    if (!emailId.text.trim().isEmail) {
       ToastManager.shared.show("Please enter valid emailId!");
       return false;
     }
     if (withName) {
-      if (name.text
-          .trim()
-          .isEmpty) {
+      if (name.text.trim().isEmpty) {
         ToastManager.shared.show("Please enter your name!");
         return false;
       }
     }
-    if (password.text
-        .trim()
-        .length < 6) {
+    if (password.text.trim().length < 6) {
       ToastManager.shared.show("Password should be about 6 characters!");
       return false;
     }
@@ -92,6 +89,10 @@ class VMLogin extends GetxController {
           print('Image URL: $imageUrl');
           await user?.updatePhotoURL(imageUrl);
           await user?.reload();
+          FirebaseFirestore.instance.collection("Users").doc(user?.uid).update({
+            "photoUrl": imageUrl,
+          });
+          loggedInUser.value = FirebaseAuth.instance.currentUser;
           onDone();
         });
       } catch (e) {
@@ -110,11 +111,12 @@ class VMLogin extends GetxController {
       LoadingManager.shared.showLoading();
       try {
         final credential =
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
+            await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailId.text,
           password: password.text,
         );
         await FirebaseAuth.instance.currentUser?.reload();
+        loggedInUser.value = FirebaseAuth.instance.currentUser;
         print(credential);
         Get.back();
 
@@ -127,6 +129,8 @@ class VMLogin extends GetxController {
           ToastManager.shared.show("No user found for that email.");
         } else if (e.code == 'wrong-password') {
           ToastManager.shared.show("Wrong password provided for that user.");
+        } else if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
+          ToastManager.shared.show("Invalid login credentials.");
         }
       } catch (e) {
         print(e);
@@ -141,7 +145,7 @@ class VMLogin extends GetxController {
       LoadingManager.shared.showLoading();
       try {
         final credential =
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailId.text,
           password: password.text,
         );
@@ -149,6 +153,16 @@ class VMLogin extends GetxController {
         if (user != null) {
           await user.updateDisplayName(name.text);
           await user.reload();
+          FirebaseFirestore.instance.collection("users").doc(user.uid).set({
+            "username": name.text,
+            "uid": user.uid,
+            "photo_url": user.photoURL,
+            "likes": 0,
+            "places": 0,
+            "views": 0,
+            "created_at": Timestamp.now(),
+          });
+          loggedInUser.value = FirebaseAuth.instance.currentUser;
           print(FirebaseAuth.instance.currentUser);
         }
 

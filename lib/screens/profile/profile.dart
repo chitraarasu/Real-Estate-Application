@@ -105,7 +105,8 @@ class Profile extends StatelessWidget {
                               children: [
                                 vSpace(radius),
                                 getCustomFont(
-                                  userData?.displayName ?? "",
+                                  userData?.displayName.toString().capitalize ??
+                                      "",
                                   18,
                                   Colors.black,
                                   1,
@@ -184,37 +185,39 @@ class Profile extends StatelessWidget {
                         ],
                       ),
                       vSpace(15),
-                      GestureDetector(
-                        onTap: () {
-                          Get.to(() => ManagePlaces());
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(width: .5, color: darkGrey),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: getCustomFont(
-                                    "Manage Places",
-                                    15,
-                                    Colors.black,
-                                    1,
-                                    fontWeight: semiBold,
+                      if (FirebaseAuth.instance.currentUser?.email ==
+                          "admin@gmail.com")
+                        GestureDetector(
+                          onTap: () {
+                            Get.to(() => ManagePlaces());
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(width: .5, color: darkGrey),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: getCustomFont(
+                                      "Manage Places",
+                                      15,
+                                      Colors.black,
+                                      1,
+                                      fontWeight: semiBold,
+                                    ),
                                   ),
-                                ),
-                                Icon(
-                                  Icons.double_arrow_rounded,
-                                  color: darkGrey,
-                                )
-                              ],
+                                  Icon(
+                                    Icons.double_arrow_rounded,
+                                    color: darkGrey,
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ),

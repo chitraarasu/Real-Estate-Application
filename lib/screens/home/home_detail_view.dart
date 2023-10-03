@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:real_estate/screens/profile/pdf_viewer.dart';
@@ -6,6 +7,7 @@ import 'package:real_estate/utils/manager/font_manager.dart';
 import 'package:real_estate/widget/appbar/first_appbar.dart';
 import 'package:real_estate/widget/buttons/secondary_button.dart';
 
+import '../../model/m_place.dart';
 import '../../utils/manager/color_manager.dart';
 import '../../utils/resizer/fetch_pixels.dart';
 import '../../widget/buttons/primary_button.dart';
@@ -14,11 +16,18 @@ import '../login/login_screen.dart';
 import '../login/vm_login.dart';
 import '../textbox/first_textbox.dart';
 import '../textbox/vm_textbox.dart';
+import '../your_places/vm_new_place.dart';
 
 class HomeDetailView extends StatelessWidget {
   final bool isManagePlaceList;
+  final bool isMyPlace;
+  final PlaceModel? placeData;
 
-  HomeDetailView({super.key, this.isManagePlaceList = false});
+  HomeDetailView(
+      {super.key,
+      this.isManagePlaceList = false,
+      this.isMyPlace = false,
+      this.placeData});
 
   Widget getIconText(IconData iData, String text) {
     return Row(
@@ -107,9 +116,13 @@ class HomeDetailView extends StatelessWidget {
     );
   }
 
+  CarouselController carouselController = CarouselController();
+
   @override
   Widget build(BuildContext context) {
     final vmLoginData = Get.find<VMLogin>();
+    final data = Get.find<VMNewPlace>();
+
     EdgeInsets edgeInsets = EdgeInsets.symmetric(horizontal: 15);
 
     return Scaffold(
@@ -122,7 +135,7 @@ class HomeDetailView extends StatelessWidget {
                 children: [
                   FirstAppBar(
                     title: "Details",
-                    action: isManagePlaceList
+                    action: isManagePlaceList || isMyPlace
                         ? Container()
                         : Row(
                             children: [
@@ -158,20 +171,46 @@ class HomeDetailView extends StatelessWidget {
                           Stack(
                             alignment: Alignment.bottomRight,
                             children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(15),
-                                child: Container(
-                                  height: FetchPixels.getPixelHeight(180),
-                                  color: grey,
-                                  child: Image(
-                                    image: NetworkImage(
-                                      "https://via.placeholder.com/400x500",
-                                    ),
-                                    width: double.infinity,
-                                    height: double.infinity,
-                                    fit: BoxFit.cover,
-                                  ),
+                              CarouselSlider(
+                                carouselController: carouselController,
+                                options: CarouselOptions(
+                                  // height: 156,
+                                  // aspectRatio: 16 / 9,
+                                  viewportFraction: 1,
+                                  initialPage: 0,
+                                  enableInfiniteScroll: 1 == 1 ? false : true,
+                                  reverse: false,
+                                  autoPlay: 1 == 1 ? false : true,
+                                  autoPlayInterval: Duration(seconds: 5),
+                                  autoPlayAnimationDuration:
+                                      Duration(seconds: 1),
+                                  enlargeCenterPage: false,
+                                  // enlargeFactor: 0.3,
+                                  scrollDirection: Axis.horizontal,
+                                  onPageChanged: (index, reason) {
+                                    // _currentIndex.value =
+                                    //     index;
+                                  },
                                 ),
+                                items: [1, 2, 3]
+                                    .map((e) => ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                          child: Container(
+                                            height:
+                                                FetchPixels.getPixelHeight(180),
+                                            color: grey,
+                                            child: Image(
+                                              image: NetworkImage(
+                                                "https://via.placeholder.com/400x500",
+                                              ),
+                                              width: double.infinity,
+                                              height: double.infinity,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ))
+                                    .toList(),
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
@@ -415,7 +454,14 @@ class HomeDetailView extends StatelessWidget {
                               1,
                             ),
                             Spacer(),
-                            PrimaryButton("Call"),
+                            PrimaryButton(
+                              isMyPlace ? "Active" : "Call",
+                              onTap: () {
+                                if (isMyPlace) {
+                                  data.showAlert(context);
+                                }
+                              },
+                            ),
                           ],
                         ),
                 ),

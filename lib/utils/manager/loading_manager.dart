@@ -38,3 +38,9 @@ class LoadingManager {
     }
   }
 }
+
+const loading = Center(child: CircularProgressIndicator());
+
+Widget getErrorMessage() {
+  return const Center(child: Text("Something went wrong!"));
+}

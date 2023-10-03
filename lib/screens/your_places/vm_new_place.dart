@@ -1,14 +1,22 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:real_estate/model/m_place.dart';
 import 'package:real_estate/utils/manager/toast_manager.dart';
+import 'package:real_estate/widget/widget_utils.dart';
 
 import '../../model/m_category.dart';
 import '../../utils/c_extensions.dart';
+import '../../utils/manager/color_manager.dart';
+import '../../utils/manager/font_manager.dart';
+import '../../utils/manager/loading_manager.dart';
 import '../textbox/vm_textbox.dart';
 
 class VMNewPlace extends GetxController {
@@ -87,11 +95,15 @@ class VMNewPlace extends GetxController {
 
   bool validate({bool withOTP = true}) {
     hideKeyboard();
-    if (name.text.trim().isEmpty) {
+    if (name.text
+        .trim()
+        .isEmpty) {
       ToastManager.shared.show("Please enter name!");
       return false;
     }
-    if (!mobile.text.trim().isPhoneNumber) {
+    if (!mobile.text
+        .trim()
+        .isPhoneNumber) {
       ToastManager.shared.show("Please enter valid number!");
       return false;
     }
@@ -99,11 +111,15 @@ class VMNewPlace extends GetxController {
       ToastManager.shared.show("Please select a category!");
       return false;
     }
-    if (address.text.trim().isEmpty) {
+    if (address.text
+        .trim()
+        .isEmpty) {
       ToastManager.shared.show("Please enter the address!");
       return false;
     }
-    if (price.text.trim().isEmpty) {
+    if (price.text
+        .trim()
+        .isEmpty) {
       ToastManager.shared.show("Please enter the price!");
       return false;
     }
@@ -111,7 +127,9 @@ class VMNewPlace extends GetxController {
       ToastManager.shared.show("Please enter valid price!");
       return false;
     }
-    if (beds.text.trim().isEmpty) {
+    if (beds.text
+        .trim()
+        .isEmpty) {
       ToastManager.shared.show("Please enter bedroom count!");
       return false;
     }
@@ -119,7 +137,9 @@ class VMNewPlace extends GetxController {
       ToastManager.shared.show("Please enter valid bedroom count!");
       return false;
     }
-    if (bath.text.trim().isEmpty) {
+    if (bath.text
+        .trim()
+        .isEmpty) {
       ToastManager.shared.show("Please enter bathroom count!");
       return false;
     }
@@ -127,7 +147,9 @@ class VMNewPlace extends GetxController {
       ToastManager.shared.show("Please enter valid bathroom count!");
       return false;
     }
-    if (sqft.text.trim().isEmpty) {
+    if (sqft.text
+        .trim()
+        .isEmpty) {
       ToastManager.shared.show("Please enter sqft!");
       return false;
     }
@@ -143,7 +165,9 @@ class VMNewPlace extends GetxController {
       ToastManager.shared.show("Please select place images!");
       return false;
     }
-    if (description.text.trim().isEmpty) {
+    if (description.text
+        .trim()
+        .isEmpty) {
       ToastManager.shared.show("Please enter description!");
       return false;
     }
@@ -152,6 +176,83 @@ class VMNewPlace extends GetxController {
       return false;
     }
     return true;
+  }
+
+  showAlert(context) {
+    showDialog(
+      context: context,
+      builder: (ctx) =>
+          AlertDialog(
+            title: getCustomFont(
+              "Reason for rejection!",
+              18,
+              Colors.redAccent,
+              1,
+              fontWeight: bold,
+            ),
+            content: SingleChildScrollView(
+              child: getCustomFont(
+                "Lorem Ipsum is simply dummy unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+                14,
+                darkGrey,
+                1000,
+                fontWeight: semiBold,
+                textAlign: TextAlign.justify,
+              ),
+            ),
+          ),
+    );
+  }
+
+  storePlaceDate(bool isForSale) async {
+    if (!validate()) {
+      return;
+    }
+    User? user = FirebaseAuth.instance.currentUser;
+    var randomDoc = FirebaseFirestore.instance.collection("places").doc();
+
+
+    LoadingManager.shared.showLoading();
+
+    try {
+      String? url = await uploadDocument(randomDoc.id);
+      if (url != null) {
+        List<String> urls = await uploadImages(randomDoc.id);
+
+        if (urls.isNotEmpty) {
+          PlaceModel placeModel = PlaceModel(
+            userId: user?.uid,
+            placeId: randomDoc.id,
+            name: name.text,
+            mobile: mobile.text,
+            categoryId: selectedItem.value!.id,
+            address: address.text,
+            price: price.text,
+            isForSale: isForSale,
+            beds: beds.text,
+            bath: bath.text,
+            sqft: sqft.text,
+            documentUrl: url,
+            imagesUrl: urls,
+            description: description.text,
+            latitude: customMarkers.value.first.point.latitude,
+            longitude: customMarkers.value.first.point.longitude,
+            createdAt: Timestamp.now(),
+          );
+
+          randomDoc.set(
+            placeModel.toJson(),
+          );
+
+          Get.back();
+        }
+      }
+    } catch (e) {
+      print(e);
+      ToastManager.shared.show("Failed to create place!");
+    } finally {
+      LoadingManager.shared.hideLoading();
+    }
   }
 
   Future determinePosition() async {
@@ -177,5 +278,56 @@ class VMNewPlace extends GetxController {
 
     currentLocation = await Geolocator.getCurrentPosition();
     print(currentLocation);
+  }
+
+  Future<List<String>> uploadImages(documentId) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+
+      List<String> downloadUrls = [];
+      ToastManager.shared.show("Uploading images");
+
+      for (var element in selectedImages.value) {
+        Reference storageReference = FirebaseStorage.instance.ref().child(
+            'places/${user?.uid}/$documentId/${selectedImages.value.indexOf(
+                element)}.png');
+        UploadTask uploadTask = storageReference.putFile(element);
+        await uploadTask.whenComplete(() async {
+          String imageUrl = await storageReference.getDownloadURL();
+          downloadUrls.add(imageUrl);
+          print('Image URL: $imageUrl');
+        });
+      }
+
+      return downloadUrls;
+    } catch (e) {
+      ToastManager.shared.show("Failed to upload images!");
+      print('Error uploading image: $e');
+      return [];
+    }
+  }
+
+  Future<String?> uploadDocument(documentId) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+
+      String? url;
+      ToastManager.shared.show("Uploading land document");
+
+      Reference storageReference = FirebaseStorage.instance
+          .ref()
+          .child('places/${user?.uid}/$documentId/land-document.pdf');
+      UploadTask uploadTask = storageReference.putFile(selectedPdf.value!);
+      await uploadTask.whenComplete(() async {
+        String imageUrl = await storageReference.getDownloadURL();
+        url = imageUrl;
+        print('Image URL: $imageUrl');
+      });
+      return url;
+    } catch (e) {
+      ToastManager.shared.show("Failed to upload land document!");
+      print('Error uploading image: $e');
+      return null;
+    }
   }
 }

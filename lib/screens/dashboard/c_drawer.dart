@@ -37,82 +37,82 @@ class CDrawer extends StatelessWidget {
               ),
               Spacer(),
               Obx(
-                    () =>
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        DrawerTile<String>(
-                          "home",
-                          "Home",
-                          isActive: RouteController.to.currentPos.value == 0,
-                          onTap: () {
-                            RouteController.to.zoomDrawerController.close!();
-                            RouteController.to.currentPos.value = 0;
-                          },
-                        ),
-                        DrawerTile<IconData>(
-                          Icons.add_box_rounded,
-                          "Your Places",
-                          isActive: RouteController.to.currentPos.value == 1,
-                          onTap: () {
-                            RouteController.to.zoomDrawerController.close!();
-                            if (data.isLoggedIn.value) {
-                              RouteController.to.currentPos.value = 1;
-                            } else {
-                              openSignInAlert();
-                            }
-                          },
-                        ),
-                        DrawerTile<String>(
-                          "profile",
-                          "Profile",
-                          isActive: RouteController.to.currentPos.value == 2,
-                          onTap: () {
-                            RouteController.to.zoomDrawerController.close!();
-                            if (data.isLoggedIn.value) {
-                              RouteController.to.currentPos.value = 2;
-                            } else {
-                              openSignInAlert();
-                            }
-                          },
-                        ),
-                        DrawerTile<String>(
-                          "heart",
-                          "Favorites",
-                          isActive: RouteController.to.currentPos.value == 3,
-                          onTap: () {
-                            RouteController.to.zoomDrawerController.close!();
-                            if (data.isLoggedIn.value) {
-                              RouteController.to.currentPos.value = 3;
-                            } else {
-                              openSignInAlert();
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-              ),
-              Spacer(),
-              Obx(
-                    () =>
-                !data.isLoggedIn.value
-                    ? Container()
-                    : Row(
+                () => Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 8,
-                        horizontal: 3,
-                      ),
-                      child: SecondaryButton(
-                        onTap: () {
-                          data.logout();
-                        },
-                      ),
+                    DrawerTile<String>(
+                      "home",
+                      "Home",
+                      isActive: RouteController.to.currentPos.value == 0,
+                      onTap: () {
+                        RouteController.to.zoomDrawerController.close!();
+                        RouteController.to.currentPos.value = 0;
+                      },
+                    ),
+                    DrawerTile<IconData>(
+                      Icons.add_box_rounded,
+                      "Your Places",
+                      isActive: RouteController.to.currentPos.value == 1,
+                      onTap: () {
+                        RouteController.to.zoomDrawerController.close!();
+                        if (data.isLoggedIn.value) {
+                          RouteController.to.currentPos.value = 1;
+                        } else {
+                          openSignInAlert();
+                        }
+                      },
+                    ),
+                    DrawerTile<String>(
+                      "profile",
+                      "Profile",
+                      isActive: RouteController.to.currentPos.value == 2,
+                      onTap: () {
+                        RouteController.to.zoomDrawerController.close!();
+                        if (data.isLoggedIn.value) {
+                          RouteController.to.currentPos.value = 2;
+                        } else {
+                          openSignInAlert();
+                        }
+                      },
+                    ),
+                    DrawerTile<String>(
+                      "heart",
+                      "Favorites",
+                      isActive: RouteController.to.currentPos.value == 3,
+                      onTap: () {
+                        RouteController.to.zoomDrawerController.close!();
+                        if (data.isLoggedIn.value) {
+                          RouteController.to.currentPos.value = 3;
+                        } else {
+                          openSignInAlert();
+                        }
+                      },
                     ),
                   ],
                 ),
+              ),
+              Spacer(),
+              Obx(
+                () => !data.isLoggedIn.value
+                    ? Container()
+                    : Row(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              vertical: 8,
+                              horizontal: 3,
+                            ),
+                            child: SecondaryButton(
+                              onTap: () {
+                                RouteController
+                                    .to.zoomDrawerController.close!();
+                                data.logout();
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
               ),
             ],
           ),
@@ -155,21 +155,19 @@ class DrawerTile<T> extends StatelessWidget {
                       if (icon == "heart") hSpace(3),
                       icon.runtimeType == String
                           ? ImageIcon(
-                        AssetImage(icon
-                            .toString()
-                            .png),
-                        color: Colors.white,
-                        size: icon == "heart" ? 17 : 20,
-                        // size: FetchPixels.getPixelHeight(
-                        //   icon == "heart" ? 17 : 20,
-                        // ),
-                      )
+                              AssetImage(icon.toString().png),
+                              color: Colors.white,
+                              size: icon == "heart" ? 17 : 20,
+                              // size: FetchPixels.getPixelHeight(
+                              //   icon == "heart" ? 17 : 20,
+                              // ),
+                            )
                           : Icon(
-                        icon as IconData,
-                        color: Colors.white,
-                        size: 22,
-                        // size: FetchPixels.getPixelHeight(22),
-                      ),
+                              icon as IconData,
+                              color: Colors.white,
+                              size: 22,
+                              // size: FetchPixels.getPixelHeight(22),
+                            ),
                       SizedBox(
                         width: 20,
                       ),

@@ -31,6 +31,7 @@ class PlaceModel {
   final double? latitude;
   final double? longitude;
   final Timestamp? createdAt;
+  late final double? distanceFromCurrentLocation; // local filter param
 
   PlaceModel({
     this.userId,
@@ -52,6 +53,7 @@ class PlaceModel {
     this.latitude,
     this.longitude,
     this.createdAt,
+    this.distanceFromCurrentLocation,
   });
 
   factory PlaceModel.fromJson(Map<String, dynamic> json) => PlaceModel(

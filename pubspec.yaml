@@ -56,6 +56,9 @@ dependencies:
   carousel_slider: ^4.2.1
   maps_launcher: ^2.2.0
   url_launcher: ^6.1.14
+  flutter_image_compress: ^2.0.4
+  avatar_glow: ^2.0.2
+  speech_to_text: ^6.3.0
 
 
 dev_dependencies:
@@ -84,6 +87,9 @@ flutter:
     - assets/
     - assets/images/
     - assets/animations/
+    - assets/sounds/speech_to_text_listening.m4r
+    - assets/sounds/speech_to_text_cancel.m4r
+    - assets/sounds/speech_to_text_stop.m4r
 
   fonts:
     - family: Nunito

@@ -54,5 +54,9 @@
       <string>sms</string>
       <string>tel</string>
     </array>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Recognition use and display input</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Default speech input</string>
 </dict>
 </plist>

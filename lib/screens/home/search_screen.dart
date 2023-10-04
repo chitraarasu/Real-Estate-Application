@@ -246,36 +246,42 @@ class SearchScreen extends StatelessWidget {
                             ),
                             vSpace(5),
                             Obx(
-                              () => ListView.builder(
-                                itemCount: filteredList.length,
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                padding: EdgeInsets.only(top: 6),
-                                itemBuilder: (BuildContext context, int index) {
-                                  return getPaddingWidget(
-                                    EdgeInsets.only(
-                                      bottom: FetchPixels.getPixelHeight(20),
+                              () => filteredList.isEmpty
+                                  ? emptyView("No result found!")
+                                  : ListView.builder(
+                                      itemCount: filteredList.length,
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      padding: EdgeInsets.only(top: 6),
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return getPaddingWidget(
+                                          EdgeInsets.only(
+                                            bottom:
+                                                FetchPixels.getPixelHeight(20),
+                                          ),
+                                          child: HomeCard(
+                                            isDetailedList: true,
+                                            placeData: filteredList[index],
+                                            distanceFromCL: locationFilterOn
+                                                    .value
+                                                ? data.currentLocation != null
+                                                    ? calculateDistance(
+                                                        filteredList[index]
+                                                            .latitude!,
+                                                        filteredList[index]
+                                                            .longitude!,
+                                                        data.currentLocation!
+                                                            .latitude,
+                                                        data.currentLocation!
+                                                            .longitude,
+                                                      )
+                                                    : null
+                                                : null,
+                                          ),
+                                        );
+                                      },
                                     ),
-                                    child: HomeCard(
-                                      isDetailedList: true,
-                                      placeData: filteredList[index],
-                                      distanceFromCL: locationFilterOn.value
-                                          ? data.currentLocation != null
-                                              ? calculateDistance(
-                                                  filteredList[index].latitude!,
-                                                  filteredList[index]
-                                                      .longitude!,
-                                                  data.currentLocation!
-                                                      .latitude,
-                                                  data.currentLocation!
-                                                      .longitude,
-                                                )
-                                              : null
-                                          : null,
-                                    ),
-                                  );
-                                },
-                              ),
                             ),
                           ],
                         ),

@@ -65,6 +65,8 @@ extension ColorExtension on String {
 
 extension Storage on String {
   get png => "assets/images/$this.png";
+
+  get lottie => "assets/animations/$this.json";
 // get railwayImage => "assets/railway_images/$this";
 // get lottie => "assets/animations/$this.json";
 }

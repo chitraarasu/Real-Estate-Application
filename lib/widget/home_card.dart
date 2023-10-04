@@ -218,11 +218,18 @@ class HomeCard extends StatelessWidget {
                         if (isMyPlaceList)
                           GestureDetector(
                             onTap: () {
-                              data.showAlert(context);
+                              if (placeData?.rejectedReason != null) {
+                                data.showAlert(
+                                    context, placeData?.rejectedReason);
+                              }
                             },
                             child: Container(
                               decoration: BoxDecoration(
-                                color: green,
+                                color: placeData?.rejectedReason != null
+                                    ? Colors.redAccent
+                                    : placeData?.isApproved == true
+                                        ? green
+                                        : darkGrey,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: getPaddingWidget(
@@ -231,7 +238,11 @@ class HomeCard extends StatelessWidget {
                                   horizontal: 6,
                                 ),
                                 child: getCustomFont(
-                                  "Active",
+                                  placeData?.rejectedReason != null
+                                      ? "Rejected"
+                                      : placeData?.isApproved ?? false
+                                          ? "Active"
+                                          : "In Review",
                                   15,
                                   Colors.white,
                                   1,

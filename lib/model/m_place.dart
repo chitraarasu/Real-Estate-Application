@@ -20,6 +20,8 @@ class PlaceModel {
   final String? address;
   final String? price;
   final bool? isForSale;
+  final bool? isApproved;
+  final String? rejectedReason;
   final String? beds;
   final String? bath;
   final String? sqft;
@@ -39,6 +41,8 @@ class PlaceModel {
     this.address,
     this.price,
     this.isForSale,
+    this.isApproved,
+    this.rejectedReason,
     this.beds,
     this.bath,
     this.sqft,
@@ -59,6 +63,8 @@ class PlaceModel {
         address: json["address"],
         price: json["price"],
         isForSale: json["isForSale"],
+        isApproved: json["isApproved"],
+        rejectedReason: json["rejected_reason"],
         beds: json["beds"],
         bath: json["bath"],
         sqft: json["sqft"],
@@ -81,6 +87,8 @@ class PlaceModel {
         "address": address,
         "price": price,
         "isForSale": isForSale,
+        "isApproved": isApproved,
+        "rejected_reason": rejectedReason,
         "beds": beds,
         "bath": bath,
         "sqft": sqft,

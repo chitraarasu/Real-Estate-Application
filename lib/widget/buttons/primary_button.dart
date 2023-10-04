@@ -9,15 +9,17 @@ class PrimaryButton extends StatelessWidget {
   final String title;
   final double? radius;
   final EdgeInsets? padding;
+  final Color buttonColor;
   final Function()? onTap;
 
-  PrimaryButton(this.title, {this.radius, this.padding, this.onTap});
+  PrimaryButton(this.title,
+      {this.radius, this.padding, this.onTap, this.buttonColor = darkBlue});
 
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(
       style: OutlinedButton.styleFrom(
-        backgroundColor: darkBlue,
+        backgroundColor: buttonColor,
         // side: const BorderSide(color: Colors.white, width: 2.0),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radius ?? 30.0),

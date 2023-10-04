@@ -526,10 +526,18 @@ class HomeDetailView extends StatelessWidget {
                               ),
                             Spacer(),
                             PrimaryButton(
-                              isMyPlace ? "Active" : "Call",
+                              isMyPlace
+                                  ? placeData?.rejectedReason != null
+                                      ? "Rejected"
+                                      : placeData?.isApproved ?? false
+                                          ? "Active"
+                                          : "In Review"
+                                  : "Call",
                               onTap: () {
                                 if (isMyPlace) {
-                                  data.showAlert(context);
+                                  if (placeData?.rejectedReason != null) {
+                                    data.showAlert(context, "");
+                                  }
                                 } else {
                                   final Uri launchUri = Uri(
                                     scheme: 'tel',
@@ -538,6 +546,13 @@ class HomeDetailView extends StatelessWidget {
                                   launchUrl(launchUri);
                                 }
                               },
+                              buttonColor: isMyPlace
+                                  ? placeData?.rejectedReason != null
+                                      ? Colors.redAccent
+                                      : placeData?.isApproved == true
+                                          ? green
+                                          : darkGrey
+                                  : darkBlue,
                             ),
                           ],
                         ),

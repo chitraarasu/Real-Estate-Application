@@ -95,15 +95,11 @@ class VMNewPlace extends GetxController {
 
   bool validate({bool withOTP = true}) {
     hideKeyboard();
-    if (name.text
-        .trim()
-        .isEmpty) {
+    if (name.text.trim().isEmpty) {
       ToastManager.shared.show("Please enter name!");
       return false;
     }
-    if (!mobile.text
-        .trim()
-        .isPhoneNumber) {
+    if (!mobile.text.trim().isPhoneNumber) {
       ToastManager.shared.show("Please enter valid number!");
       return false;
     }
@@ -111,15 +107,11 @@ class VMNewPlace extends GetxController {
       ToastManager.shared.show("Please select a category!");
       return false;
     }
-    if (address.text
-        .trim()
-        .isEmpty) {
+    if (address.text.trim().isEmpty) {
       ToastManager.shared.show("Please enter the address!");
       return false;
     }
-    if (price.text
-        .trim()
-        .isEmpty) {
+    if (price.text.trim().isEmpty) {
       ToastManager.shared.show("Please enter the price!");
       return false;
     }
@@ -127,9 +119,7 @@ class VMNewPlace extends GetxController {
       ToastManager.shared.show("Please enter valid price!");
       return false;
     }
-    if (beds.text
-        .trim()
-        .isEmpty) {
+    if (beds.text.trim().isEmpty) {
       ToastManager.shared.show("Please enter bedroom count!");
       return false;
     }
@@ -137,9 +127,7 @@ class VMNewPlace extends GetxController {
       ToastManager.shared.show("Please enter valid bedroom count!");
       return false;
     }
-    if (bath.text
-        .trim()
-        .isEmpty) {
+    if (bath.text.trim().isEmpty) {
       ToastManager.shared.show("Please enter bathroom count!");
       return false;
     }
@@ -147,9 +135,7 @@ class VMNewPlace extends GetxController {
       ToastManager.shared.show("Please enter valid bathroom count!");
       return false;
     }
-    if (sqft.text
-        .trim()
-        .isEmpty) {
+    if (sqft.text.trim().isEmpty) {
       ToastManager.shared.show("Please enter sqft!");
       return false;
     }
@@ -165,9 +151,7 @@ class VMNewPlace extends GetxController {
       ToastManager.shared.show("Please select place images!");
       return false;
     }
-    if (description.text
-        .trim()
-        .isEmpty) {
+    if (description.text.trim().isEmpty) {
       ToastManager.shared.show("Please enter description!");
       return false;
     }
@@ -178,29 +162,28 @@ class VMNewPlace extends GetxController {
     return true;
   }
 
-  showAlert(context) {
+  showAlert(context, reason) {
     showDialog(
       context: context,
-      builder: (ctx) =>
-          AlertDialog(
-            title: getCustomFont(
-              "Reason for rejection!",
-              18,
-              Colors.redAccent,
-              1,
-              fontWeight: bold,
-            ),
-            content: SingleChildScrollView(
-              child: getCustomFont(
-                "Lorem Ipsum is simply dummy unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-                14,
-                darkGrey,
-                1000,
-                fontWeight: semiBold,
-                textAlign: TextAlign.justify,
-              ),
-            ),
+      builder: (ctx) => AlertDialog(
+        title: getCustomFont(
+          "Reason for rejection!",
+          18,
+          Colors.redAccent,
+          1,
+          fontWeight: bold,
+        ),
+        content: SingleChildScrollView(
+          child: getCustomFont(
+            reason,
+            14,
+            darkGrey,
+            1000,
+            fontWeight: semiBold,
+            textAlign: TextAlign.justify,
           ),
+        ),
+      ),
     );
   }
 
@@ -210,7 +193,6 @@ class VMNewPlace extends GetxController {
     }
     User? user = FirebaseAuth.instance.currentUser;
     var randomDoc = FirebaseFirestore.instance.collection("places").doc();
-
 
     LoadingManager.shared.showLoading();
 
@@ -229,6 +211,8 @@ class VMNewPlace extends GetxController {
             address: address.text,
             price: price.text,
             isForSale: isForSale,
+            isApproved: false,
+            rejectedReason: null,
             beds: beds.text,
             bath: bath.text,
             sqft: sqft.text,
@@ -289,8 +273,7 @@ class VMNewPlace extends GetxController {
 
       for (var element in selectedImages.value) {
         Reference storageReference = FirebaseStorage.instance.ref().child(
-            'places/${user?.uid}/$documentId/${selectedImages.value.indexOf(
-                element)}.png');
+            'places/${user?.uid}/$documentId/${selectedImages.value.indexOf(element)}.png');
         UploadTask uploadTask = storageReference.putFile(element);
         await uploadTask.whenComplete(() async {
           String imageUrl = await storageReference.getDownloadURL();

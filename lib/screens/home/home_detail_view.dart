@@ -1,11 +1,14 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 import 'package:real_estate/screens/profile/pdf_viewer.dart';
 import 'package:real_estate/utils/c_extensions.dart';
 import 'package:real_estate/utils/manager/font_manager.dart';
 import 'package:real_estate/widget/appbar/first_appbar.dart';
 import 'package:real_estate/widget/buttons/secondary_button.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../model/m_place.dart';
 import '../../utils/manager/color_manager.dart';
@@ -118,6 +121,24 @@ class HomeDetailView extends StatelessWidget {
 
   CarouselController carouselController = CarouselController();
 
+  String formatDuration(timestamp) {
+    Duration duration = DateTime.now().difference(timestamp);
+    if (duration.inDays > 0) {
+      final days = duration.inDays;
+      return '$days d${days > 1 ? 's' : ''} ago';
+    } else if (duration.inHours > 0) {
+      final hours = duration.inHours;
+      return '$hours h${hours > 1 ? 's' : ''} ago';
+    } else if (duration.inMinutes > 0) {
+      final minutes = duration.inMinutes;
+      return '$minutes m${minutes > 1 ? 's' : ''} ago';
+    } else {
+      return 'Just now';
+    }
+  }
+
+  RxInt _currentIndex = RxInt(0);
+
   @override
   Widget build(BuildContext context) {
     final vmLoginData = Get.find<VMLogin>();
@@ -188,25 +209,30 @@ class HomeDetailView extends StatelessWidget {
                                   // enlargeFactor: 0.3,
                                   scrollDirection: Axis.horizontal,
                                   onPageChanged: (index, reason) {
-                                    // _currentIndex.value =
-                                    //     index;
+                                    _currentIndex.value = index;
                                   },
                                 ),
-                                items: [1, 2, 3]
-                                    .map((e) => ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                          child: Container(
-                                            height:
-                                                FetchPixels.getPixelHeight(180),
-                                            color: grey,
-                                            child: Image(
-                                              image: NetworkImage(
-                                                "https://via.placeholder.com/400x500",
+                                items: placeData?.imagesUrl
+                                    ?.map((e) => Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 2.0),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                            child: Container(
+                                              height:
+                                                  FetchPixels.getPixelHeight(
+                                                      180),
+                                              color: grey,
+                                              child: Image(
+                                                image: NetworkImage(
+                                                  e ??
+                                                      "https://via.placeholder.com/400x500",
+                                                ),
+                                                width: double.infinity,
+                                                height: double.infinity,
+                                                fit: BoxFit.cover,
                                               ),
-                                              width: double.infinity,
-                                              height: double.infinity,
-                                              fit: BoxFit.cover,
                                             ),
                                           ),
                                         ))
@@ -238,8 +264,14 @@ class HomeDetailView extends StatelessWidget {
                                               scale: FetchPixels.getScale(),
                                             ),
                                             hSpace(5),
-                                            getCustomFont(
-                                                "1 / 20", 15, darkGrey, 1),
+                                            Obx(
+                                              () => getCustomFont(
+                                                "${_currentIndex.value + 1} / ${placeData?.imagesUrl?.length ?? 1}",
+                                                15,
+                                                darkGrey,
+                                                1,
+                                              ),
+                                            ),
                                           ],
                                         ),
                                       ),
@@ -257,16 +289,41 @@ class HomeDetailView extends StatelessWidget {
                                 backgroundColor: grey,
                               ),
                               hSpace(10),
-                              getCustomFont(
-                                "Amanda Simon",
-                                17,
-                                Colors.black,
-                                1,
-                                fontWeight: bold,
-                              ),
+                              StreamBuilder(
+                                  stream: FirebaseFirestore.instance
+                                      .collection("users")
+                                      .doc(placeData?.userId)
+                                      .snapshots(),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<
+                                              DocumentSnapshot<
+                                                  Map<String, dynamic>>>
+                                          snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return Container();
+                                    } else if (snapshot.hasData) {
+                                      return getCustomFont(
+                                        snapshot.data!
+                                                .data()?["username"]
+                                                .toString()
+                                                .capitalize ??
+                                            "Amanda Simon",
+                                        17,
+                                        Colors.black,
+                                        1,
+                                        fontWeight: bold,
+                                      );
+                                    } else {
+                                      return Container();
+                                    }
+                                  }),
                               Spacer(),
                               getCustomFont(
-                                "2h ago",
+                                placeData != null
+                                    ? formatDuration(
+                                        placeData?.createdAt?.toDate())
+                                    : "2h ago",
                                 14,
                                 darkGrey,
                                 1,
@@ -279,7 +336,8 @@ class HomeDetailView extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: getCustomFont(
-                                  "64 Rosewood Street #2 San Francisco, CA",
+                                  placeData?.address ??
+                                      "64 Rosewood Street #2 San Francisco, CA",
                                   18,
                                   Colors.black,
                                   2,
@@ -287,11 +345,18 @@ class HomeDetailView extends StatelessWidget {
                                 ),
                               ),
                               hSpace(10),
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Image(
-                                  image: AssetImage("map".png),
-                                  width: FetchPixels.getPixelWidth(110),
+                              GestureDetector(
+                                onTap: () {
+                                  MapsLauncher.launchCoordinates(
+                                      placeData?.latitude ?? 0,
+                                      placeData?.longitude ?? 0);
+                                },
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image(
+                                    image: AssetImage("map".png),
+                                    width: FetchPixels.getPixelWidth(110),
+                                  ),
                                 ),
                               ),
                             ],
@@ -300,10 +365,12 @@ class HomeDetailView extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              getIconText(Icons.bed_rounded, "4 Beds"),
-                              getIconText(
-                                  Icons.bathroom_outlined, "4 Bathrooms"),
-                              getIconText(Icons.width_wide_outlined, "4 sqft"),
+                              getIconText(Icons.bed_rounded,
+                                  "${placeData?.beds ?? 0} Beds"),
+                              getIconText(Icons.bathroom_outlined,
+                                  "${placeData?.bath ?? 0}  Bathrooms"),
+                              getIconText(Icons.width_wide_outlined,
+                                  "${placeData?.sqft ?? 0}  sqft"),
                             ],
                           ),
                           vSpace(10),
@@ -316,7 +383,9 @@ class HomeDetailView extends StatelessWidget {
                               children: [
                                 GestureDetector(
                                   onTap: () {
-                                    Get.to(() => PdfView());
+                                    Get.to(() => PdfView(
+                                          url: placeData?.documentUrl ?? "",
+                                        ));
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
@@ -352,7 +421,7 @@ class HomeDetailView extends StatelessWidget {
                             ),
                           vSpace(15),
                           getCustomFont(
-                            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+                            placeData?.description ?? "",
                             16,
                             darkGrey,
                             1000,
@@ -396,18 +465,19 @@ class HomeDetailView extends StatelessWidget {
                             Row(
                               children: [
                                 getCustomFont(
-                                  "\$2,300",
+                                  "₹ ${placeData?.price}",
                                   22,
                                   Colors.black,
                                   1,
                                   fontWeight: bold,
                                 ),
-                                getCustomFont(
-                                  " /month",
-                                  16,
-                                  darkGrey,
-                                  1,
-                                ),
+                                if (!(placeData?.isForSale ?? true))
+                                  getCustomFont(
+                                    " /month",
+                                    16,
+                                    darkGrey,
+                                    1,
+                                  ),
                               ],
                             ),
                             vSpace(15),
@@ -441,24 +511,31 @@ class HomeDetailView extends StatelessWidget {
                       : Row(
                           children: [
                             getCustomFont(
-                              "\$2,300",
+                              "₹ ${placeData?.price}",
                               22,
                               Colors.black,
                               1,
                               fontWeight: bold,
                             ),
-                            getCustomFont(
-                              " /month",
-                              16,
-                              darkGrey,
-                              1,
-                            ),
+                            if (!(placeData?.isForSale ?? true))
+                              getCustomFont(
+                                " /month",
+                                16,
+                                darkGrey,
+                                1,
+                              ),
                             Spacer(),
                             PrimaryButton(
                               isMyPlace ? "Active" : "Call",
                               onTap: () {
                                 if (isMyPlace) {
                                   data.showAlert(context);
+                                } else {
+                                  final Uri launchUri = Uri(
+                                    scheme: 'tel',
+                                    path: placeData?.mobile,
+                                  );
+                                  launchUrl(launchUri);
                                 }
                               },
                             ),

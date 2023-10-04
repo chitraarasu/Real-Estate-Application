@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'manager/color_manager.dart';
-
 extension WidgetExtentions on Widget {
   // addShadow(context) {
   //   return Container(
@@ -71,21 +69,21 @@ extension Storage on String {
 // get lottie => "assets/animations/$this.json";
 }
 
-getErrorMessage(msg) {
-  return Center(
-    child: Text(
-      msg == null || msg.toString().contains("subtype")
-          ? "Something went wrong! please try again later."
-          : msg.toString().contains("SocketException")
-              ? "Please check your internet connection!"
-              : msg.toString(),
-      style: const TextStyle(
-        color: white,
-      ),
-      textAlign: TextAlign.center,
-    ),
-  );
-}
+// getErrorMessage(msg) {
+//   return Center(
+//     child: Text(
+//       msg == null || msg.toString().contains("subtype")
+//           ? "Something went wrong! please try again later."
+//           : msg.toString().contains("SocketException")
+//               ? "Please check your internet connection!"
+//               : msg.toString(),
+//       style: const TextStyle(
+//         color: white,
+//       ),
+//       textAlign: TextAlign.center,
+//     ),
+//   );
+// }
 
 hideKeyboard() {
   WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();

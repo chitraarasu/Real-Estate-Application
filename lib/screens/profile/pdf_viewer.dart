@@ -5,7 +5,9 @@ import 'package:real_estate/widget/appbar/first_appbar.dart';
 import '../../utils/resizer/fetch_pixels.dart';
 
 class PdfView extends StatelessWidget {
-  const PdfView({super.key});
+  final String url;
+
+  const PdfView({super.key, required this.url});
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +24,7 @@ class PdfView extends StatelessWidget {
             child: const FirstAppBar(title: ''),
           ),
           Expanded(
-            child: const PDF().cachedFromUrl(
-              'http://africau.edu/images/default/sample.pdf',
-            ),
+            child: PDF().cachedFromUrl(url),
           ),
         ],
       ),

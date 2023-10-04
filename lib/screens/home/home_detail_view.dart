@@ -28,10 +28,11 @@ class HomeDetailView extends StatefulWidget {
   final bool isMyPlace;
   final PlaceModel? placeData;
 
-  HomeDetailView({super.key,
-    this.isManagePlaceList = false,
-    this.isMyPlace = false,
-    this.placeData});
+  HomeDetailView(
+      {super.key,
+      this.isManagePlaceList = false,
+      this.isMyPlace = false,
+      this.placeData});
 
   @override
   State<HomeDetailView> createState() => _HomeDetailViewState();
@@ -49,8 +50,8 @@ class _HomeDetailViewState extends State<HomeDetailView> {
             .collection("users")
             .doc(widget.placeData?.userId);
 
-        DocumentSnapshot<Map<String, dynamic>> profileData = await userRef
-            .get();
+        DocumentSnapshot<Map<String, dynamic>> profileData =
+            await userRef.get();
 
         userRef.update({"views": profileData.data()?["views"] + 1});
       }
@@ -157,7 +158,9 @@ class _HomeDetailViewState extends State<HomeDetailView> {
 
   CarouselController carouselController = CarouselController();
 
-  RxInt _currentIndex = RxInt(0);
+  final RxInt _currentIndex = RxInt(0);
+
+  RxBool isLiked = RxBool(false);
 
   @override
   Widget build(BuildContext context) {
@@ -179,30 +182,34 @@ class _HomeDetailViewState extends State<HomeDetailView> {
                     action: widget.isManagePlaceList || widget.isMyPlace
                         ? Container()
                         : Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            if (vmLoginData.isLoggedIn.value) {} else {
-                              openSignInAlert();
-                            }
-                          },
-                          icon: Image.asset(
-                            "heart".png,
-                            width: FetchPixels.getPixelWidth(20),
-                            height: FetchPixels.getPixelHeight(20),
-                            color: darkGrey,
-                            scale: FetchPixels.getScale(),
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  if (vmLoginData.isLoggedIn.value) {
+                                    isLiked.value = !isLiked.value;
+                                  } else {
+                                    openSignInAlert();
+                                  }
+                                },
+                                icon: Obx(
+                                  () => Image.asset(
+                                    "heart".png,
+                                    width: FetchPixels.getPixelWidth(20),
+                                    height: FetchPixels.getPixelHeight(20),
+                                    color: isLiked.value ? darkBlue : null,
+                                    scale: FetchPixels.getScale(),
+                                  ),
+                                ),
+                              ),
+                              // IconButton(
+                              //   onPressed: () {},
+                              //   icon: Icon(
+                              //     Icons.ios_share_outlined,
+                              //     color: darkGrey,
+                              //   ),
+                              // ),
+                            ],
                           ),
-                        ),
-                        // IconButton(
-                        //   onPressed: () {},
-                        //   icon: Icon(
-                        //     Icons.ios_share_outlined,
-                        //     color: darkGrey,
-                        //   ),
-                        // ),
-                      ],
-                    ),
                   ),
                   Expanded(
                     child: SingleChildScrollView(
@@ -223,7 +230,7 @@ class _HomeDetailViewState extends State<HomeDetailView> {
                                   autoPlay: 1 == 1 ? false : true,
                                   autoPlayInterval: Duration(seconds: 5),
                                   autoPlayAnimationDuration:
-                                  Duration(seconds: 1),
+                                      Duration(seconds: 1),
                                   enlargeCenterPage: false,
                                   // enlargeFactor: 0.3,
                                   scrollDirection: Axis.horizontal,
@@ -232,30 +239,29 @@ class _HomeDetailViewState extends State<HomeDetailView> {
                                   },
                                 ),
                                 items: widget.placeData?.imagesUrl
-                                    ?.map((e) =>
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 2.0),
-                                      child: ClipRRect(
-                                        borderRadius:
-                                        BorderRadius.circular(15),
-                                        child: Container(
-                                          height:
-                                          FetchPixels.getPixelHeight(
-                                              180),
-                                          color: grey,
-                                          child: Image(
-                                            image: NetworkImage(
-                                              e ??
-                                                  "https://via.placeholder.com/400x500",
+                                    ?.map((e) => Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 2.0),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                            child: Container(
+                                              height:
+                                                  FetchPixels.getPixelHeight(
+                                                      180),
+                                              color: grey,
+                                              child: Image(
+                                                image: NetworkImage(
+                                                  e ??
+                                                      "https://via.placeholder.com/400x500",
+                                                ),
+                                                width: double.infinity,
+                                                height: double.infinity,
+                                                fit: BoxFit.cover,
+                                              ),
                                             ),
-                                            width: double.infinity,
-                                            height: double.infinity,
-                                            fit: BoxFit.cover,
                                           ),
-                                        ),
-                                      ),
-                                    ))
+                                        ))
                                     .toList(),
                               ),
                               Row(
@@ -276,25 +282,21 @@ class _HomeDetailViewState extends State<HomeDetailView> {
                                             Image.asset(
                                               "gallery".png,
                                               width:
-                                              FetchPixels.getPixelWidth(19),
+                                                  FetchPixels.getPixelWidth(19),
                                               height:
-                                              FetchPixels.getPixelHeight(
-                                                  19),
+                                                  FetchPixels.getPixelHeight(
+                                                      19),
                                               color: darkGrey,
                                               scale: FetchPixels.getScale(),
                                             ),
                                             hSpace(5),
                                             Obx(
-                                                  () =>
-                                                  getCustomFont(
-                                                    "${_currentIndex.value +
-                                                        1} / ${widget.placeData
-                                                        ?.imagesUrl?.length ??
-                                                        1}",
-                                                    15,
-                                                    darkGrey,
-                                                    1,
-                                                  ),
+                                              () => getCustomFont(
+                                                "${_currentIndex.value + 1} / ${widget.placeData?.imagesUrl?.length ?? 1}",
+                                                15,
+                                                darkGrey,
+                                                1,
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -315,9 +317,9 @@ class _HomeDetailViewState extends State<HomeDetailView> {
                                       .snapshots(),
                                   builder: (BuildContext context,
                                       AsyncSnapshot<
-                                          DocumentSnapshot<
-                                              Map<String, dynamic>>>
-                                      snapshot) {
+                                              DocumentSnapshot<
+                                                  Map<String, dynamic>>>
+                                          snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
                                       return Container();
@@ -328,30 +330,30 @@ class _HomeDetailViewState extends State<HomeDetailView> {
                                             radius: 18,
                                             backgroundColor: grey,
                                             backgroundImage: snapshot.data!
-                                                .data()?["photo_url"] ==
-                                                null
+                                                        .data()?["photo_url"] ==
+                                                    null
                                                 ? null
                                                 : NetworkImage(
-                                              snapshot.data!
-                                                  .data()!["photo_url"]
-                                                  .toString(),
-                                            ),
+                                                    snapshot.data!
+                                                        .data()!["photo_url"]
+                                                        .toString(),
+                                                  ),
                                             child: snapshot.data!
-                                                .data()?["photo_url"] !=
-                                                null
+                                                        .data()?["photo_url"] !=
+                                                    null
                                                 ? null
                                                 : Image(
-                                              image: AssetImage(
-                                                  "profile".png),
-                                              color: Colors.white,
-                                            ),
+                                                    image: AssetImage(
+                                                        "profile".png),
+                                                    color: Colors.white,
+                                                  ),
                                           ),
                                           hSpace(10),
                                           getCustomFont(
                                             snapshot.data!
-                                                .data()?["username"]
-                                                .toString()
-                                                .capitalize ??
+                                                    .data()?["username"]
+                                                    .toString()
+                                                    .capitalize ??
                                                 "Amanda Simon",
                                             17,
                                             Colors.black,
@@ -368,7 +370,7 @@ class _HomeDetailViewState extends State<HomeDetailView> {
                               getCustomFont(
                                 widget.placeData != null
                                     ? formatDuration(
-                                    widget.placeData?.createdAt?.toDate())
+                                        widget.placeData?.createdAt?.toDate())
                                     : "2h ago",
                                 14,
                                 darkGrey,
@@ -441,8 +443,7 @@ class _HomeDetailViewState extends State<HomeDetailView> {
                               children: [
                                 GestureDetector(
                                   onTap: () {
-                                    Get.to(() =>
-                                        PdfView(
+                                    Get.to(() => PdfView(
                                           url: widget.placeData?.documentUrl ??
                                               "",
                                         ));
@@ -455,9 +456,9 @@ class _HomeDetailViewState extends State<HomeDetailView> {
                                     child: getPaddingWidget(
                                       EdgeInsets.symmetric(
                                         vertical:
-                                        FetchPixels.getPixelHeight(10),
+                                            FetchPixels.getPixelHeight(10),
                                         horizontal:
-                                        FetchPixels.getPixelWidth(15),
+                                            FetchPixels.getPixelWidth(15),
                                       ),
                                       child: Row(
                                         children: [
@@ -521,107 +522,107 @@ class _HomeDetailViewState extends State<HomeDetailView> {
                   ),
                   child: widget.isManagePlaceList
                       ? Column(
-                    children: [
-                      Row(
-                        children: [
-                          getCustomFont(
-                            "₹ ${widget.placeData?.price}",
-                            22,
-                            Colors.black,
-                            1,
-                            fontWeight: bold,
-                          ),
-                          if (!(widget.placeData?.isForSale ?? true))
-                            getCustomFont(
-                              " /month",
-                              16,
-                              darkGrey,
-                              1,
+                          children: [
+                            Row(
+                              children: [
+                                getCustomFont(
+                                  "₹ ${widget.placeData?.price}",
+                                  22,
+                                  Colors.black,
+                                  1,
+                                  fontWeight: bold,
+                                ),
+                                if (!(widget.placeData?.isForSale ?? true))
+                                  getCustomFont(
+                                    " /month",
+                                    16,
+                                    darkGrey,
+                                    1,
+                                  ),
+                              ],
                             ),
-                        ],
-                      ),
-                      vSpace(15),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: SecondaryButton(
-                              title: "Reject",
-                              isFromProfile: true,
-                              padding: EdgeInsets.symmetric(
-                                vertical: FetchPixels.getPixelHeight(12),
-                                horizontal: FetchPixels.getPixelWidth(17),
-                              ),
-                              color: Colors.redAccent,
-                              onTap: () {
-                                rejectSheet();
-                              },
+                            vSpace(15),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: SecondaryButton(
+                                    title: "Reject",
+                                    isFromProfile: true,
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: FetchPixels.getPixelHeight(12),
+                                      horizontal: FetchPixels.getPixelWidth(17),
+                                    ),
+                                    color: Colors.redAccent,
+                                    onTap: () {
+                                      rejectSheet();
+                                    },
+                                  ),
+                                ),
+                                hSpace(10),
+                                Expanded(
+                                  child: PrimaryButton(
+                                    "Approve",
+                                    radius: 10,
+                                    onTap: () {
+                                      data.approvePlace(
+                                          widget.placeData?.placeId);
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          hSpace(10),
-                          Expanded(
-                            child: PrimaryButton(
-                              "Approve",
-                              radius: 10,
-                              onTap: () {
-                                data.approvePlace(
-                                    widget.placeData?.placeId);
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  )
+                          ],
+                        )
                       : Row(
-                    children: [
-                      getCustomFont(
-                        "₹ ${widget.placeData?.price}",
-                        22,
-                        Colors.black,
-                        1,
-                        fontWeight: bold,
-                      ),
-                      if (!(widget.placeData?.isForSale ?? true))
-                        getCustomFont(
-                          " /month",
-                          16,
-                          darkGrey,
-                          1,
+                          children: [
+                            getCustomFont(
+                              "₹ ${widget.placeData?.price}",
+                              22,
+                              Colors.black,
+                              1,
+                              fontWeight: bold,
+                            ),
+                            if (!(widget.placeData?.isForSale ?? true))
+                              getCustomFont(
+                                " /month",
+                                16,
+                                darkGrey,
+                                1,
+                              ),
+                            Spacer(),
+                            PrimaryButton(
+                              widget.isMyPlace
+                                  ? widget.placeData?.rejectedReason != null
+                                      ? "Rejected"
+                                      : widget.placeData?.isApproved ?? false
+                                          ? "Active"
+                                          : "In Review"
+                                  : "Call",
+                              onTap: () {
+                                if (widget.isMyPlace) {
+                                  if (widget.placeData?.rejectedReason !=
+                                      null) {
+                                    data.showAlert(context,
+                                        widget.placeData?.rejectedReason);
+                                  }
+                                } else {
+                                  final Uri launchUri = Uri(
+                                    scheme: 'tel',
+                                    path: widget.placeData?.mobile,
+                                  );
+                                  launchUrl(launchUri);
+                                }
+                              },
+                              buttonColor: widget.isMyPlace
+                                  ? widget.placeData?.rejectedReason != null
+                                      ? Colors.redAccent
+                                      : widget.placeData?.isApproved == true
+                                          ? green
+                                          : darkGrey
+                                  : darkBlue,
+                            ),
+                          ],
                         ),
-                      Spacer(),
-                      PrimaryButton(
-                        widget.isMyPlace
-                            ? widget.placeData?.rejectedReason != null
-                            ? "Rejected"
-                            : widget.placeData?.isApproved ?? false
-                            ? "Active"
-                            : "In Review"
-                            : "Call",
-                        onTap: () {
-                          if (widget.isMyPlace) {
-                            if (widget.placeData?.rejectedReason !=
-                                null) {
-                              data.showAlert(context,
-                                  widget.placeData?.rejectedReason);
-                            }
-                          } else {
-                            final Uri launchUri = Uri(
-                              scheme: 'tel',
-                              path: widget.placeData?.mobile,
-                            );
-                            launchUrl(launchUri);
-                          }
-                        },
-                        buttonColor: widget.isMyPlace
-                            ? widget.placeData?.rejectedReason != null
-                            ? Colors.redAccent
-                            : widget.placeData?.isApproved == true
-                            ? green
-                            : darkGrey
-                            : darkBlue,
-                      ),
-                    ],
-                  ),
                 ),
               ),
             ),

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:real_estate/screens/home/vm_home.dart';
 import 'package:real_estate/screens/login/login_screen.dart';
 import 'package:real_estate/utils/c_extensions.dart';
 import 'package:real_estate/utils/manager/toast_manager.dart';
@@ -23,7 +24,7 @@ class HomeCard extends StatelessWidget {
   final Function()? onTap;
   final PlaceModel? placeData;
 
-  const HomeCard({
+  HomeCard({
     super.key,
     this.isDetailedList = false,
     this.isRentList = false,
@@ -59,10 +60,13 @@ class HomeCard extends StatelessWidget {
     }
   }
 
+  RxBool isLiked = RxBool(false);
+
   @override
   Widget build(BuildContext context) {
     final vmLoginData = Get.find<VMLogin>();
     final data = Get.find<VMNewPlace>();
+    final vmHome = Get.find<VMHome>();
 
     return GestureDetector(
       onTap: () {
@@ -179,6 +183,12 @@ class HomeCard extends StatelessWidget {
                         child: GestureDetector(
                           onTap: () {
                             if (vmLoginData.isLoggedIn.value) {
+                              isLiked.value = !isLiked.value;
+                              if (isLiked.value) {
+                                vmHome.addToFavorites(placeData?.placeId);
+                              } else {
+                                vmHome.removeFromFavorites(placeData?.placeId);
+                              }
                             } else {
                               openSignInAlert();
                             }
@@ -188,9 +198,12 @@ class HomeCard extends StatelessWidget {
                             radius: FetchPixels.getPixelWidth(13),
                             child: Padding(
                               padding: const EdgeInsets.all(6.0),
-                              child: Image(
-                                image: AssetImage(
-                                  "heart".png,
+                              child: Obx(
+                                () => Image(
+                                  image: AssetImage(
+                                    "heart".png,
+                                  ),
+                                  color: isLiked.value ? darkBlue : null,
                                 ),
                               ),
                             ),

@@ -5,14 +5,16 @@ import 'package:real_estate/utils/manager/color_manager.dart';
 import 'package:real_estate/utils/resizer/fetch_pixels.dart';
 import 'package:real_estate/widget/widget_utils.dart';
 
+import '../../model/m_place.dart';
 import '../../widget/appbar/first_appbar.dart';
 import '../../widget/home_card.dart';
 
 class HomeList extends StatelessWidget {
   final String title;
   final bool isRent;
+  final List<PlaceModel> place;
 
-  HomeList(this.title, this.isRent);
+  HomeList(this.title, this.isRent, this.place);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,11 @@ class HomeList extends StatelessWidget {
               title: title,
               action: IconButton(
                 onPressed: () {
-                  Get.to(() => MapView());
+                  Get.to(
+                    () => MapView(
+                      place: place,
+                    ),
+                  );
                 },
                 icon: CircleAvatar(
                   backgroundColor: darkBlue,
@@ -39,7 +45,7 @@ class HomeList extends StatelessWidget {
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: 20,
+                itemCount: place.length,
                 padding: EdgeInsets.only(top: 6),
                 itemBuilder: (BuildContext context, int index) {
                   return getPaddingWidget(
@@ -49,6 +55,7 @@ class HomeList extends StatelessWidget {
                     child: HomeCard(
                       isDetailedList: true,
                       isRentList: isRent,
+                      placeData: place[index],
                     ),
                   );
                 },

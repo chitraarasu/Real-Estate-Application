@@ -1,7 +1,9 @@
+import 'package:get/get.dart';
+
 import '../../model/m_category.dart';
 
-class VMHome {
-  static VMHome to = VMHome();
+class VMHome extends GetxController {
+  static VMHome to = Get.find();
 
   List<CategoryModel> category = [
     CategoryModel(1, "House", "house"),

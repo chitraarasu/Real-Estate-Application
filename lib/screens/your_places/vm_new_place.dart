@@ -95,11 +95,15 @@ class VMNewPlace extends GetxController {
 
   bool validate({bool withOTP = true}) {
     hideKeyboard();
-    if (name.text.trim().isEmpty) {
+    if (name.text
+        .trim()
+        .isEmpty) {
       ToastManager.shared.show("Please enter name!");
       return false;
     }
-    if (!mobile.text.trim().isPhoneNumber) {
+    if (!mobile.text
+        .trim()
+        .isPhoneNumber) {
       ToastManager.shared.show("Please enter valid number!");
       return false;
     }
@@ -107,11 +111,15 @@ class VMNewPlace extends GetxController {
       ToastManager.shared.show("Please select a category!");
       return false;
     }
-    if (address.text.trim().isEmpty) {
+    if (address.text
+        .trim()
+        .isEmpty) {
       ToastManager.shared.show("Please enter the address!");
       return false;
     }
-    if (price.text.trim().isEmpty) {
+    if (price.text
+        .trim()
+        .isEmpty) {
       ToastManager.shared.show("Please enter the price!");
       return false;
     }
@@ -119,7 +127,9 @@ class VMNewPlace extends GetxController {
       ToastManager.shared.show("Please enter valid price!");
       return false;
     }
-    if (beds.text.trim().isEmpty) {
+    if (beds.text
+        .trim()
+        .isEmpty) {
       ToastManager.shared.show("Please enter bedroom count!");
       return false;
     }
@@ -127,7 +137,9 @@ class VMNewPlace extends GetxController {
       ToastManager.shared.show("Please enter valid bedroom count!");
       return false;
     }
-    if (bath.text.trim().isEmpty) {
+    if (bath.text
+        .trim()
+        .isEmpty) {
       ToastManager.shared.show("Please enter bathroom count!");
       return false;
     }
@@ -135,7 +147,9 @@ class VMNewPlace extends GetxController {
       ToastManager.shared.show("Please enter valid bathroom count!");
       return false;
     }
-    if (sqft.text.trim().isEmpty) {
+    if (sqft.text
+        .trim()
+        .isEmpty) {
       ToastManager.shared.show("Please enter sqft!");
       return false;
     }
@@ -151,7 +165,9 @@ class VMNewPlace extends GetxController {
       ToastManager.shared.show("Please select place images!");
       return false;
     }
-    if (description.text.trim().isEmpty) {
+    if (description.text
+        .trim()
+        .isEmpty) {
       ToastManager.shared.show("Please enter description!");
       return false;
     }
@@ -165,25 +181,26 @@ class VMNewPlace extends GetxController {
   showAlert(context, reason) {
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: getCustomFont(
-          "Reason for rejection!",
-          18,
-          Colors.redAccent,
-          1,
-          fontWeight: bold,
-        ),
-        content: SingleChildScrollView(
-          child: getCustomFont(
-            reason,
-            14,
-            darkGrey,
-            1000,
-            fontWeight: semiBold,
-            textAlign: TextAlign.justify,
+      builder: (ctx) =>
+          AlertDialog(
+            title: getCustomFont(
+              "Reason for rejection!",
+              18,
+              Colors.redAccent,
+              1,
+              fontWeight: bold,
+            ),
+            content: SingleChildScrollView(
+              child: getCustomFont(
+                reason,
+                14,
+                darkGrey,
+                1000,
+                fontWeight: semiBold,
+                textAlign: TextAlign.justify,
+              ),
+            ),
           ),
-        ),
-      ),
     );
   }
 
@@ -227,6 +244,7 @@ class VMNewPlace extends GetxController {
           randomDoc.set(
             placeModel.toJson(),
           );
+          updatePlaceCount();
 
           Get.back();
         }
@@ -237,6 +255,51 @@ class VMNewPlace extends GetxController {
     } finally {
       LoadingManager.shared.hideLoading();
     }
+  }
+
+  deletePlace(documentId) async {
+    LoadingManager.shared.showLoading();
+    User? user = FirebaseAuth.instance.currentUser;
+
+    var randomDoc =
+    FirebaseFirestore.instance.collection("places").doc(documentId);
+
+    Reference storageReference =
+    FirebaseStorage.instance.ref().child('places/${user?.uid}/$documentId');
+
+    try {
+      randomDoc.delete();
+      final result = await storageReference.listAll();
+      for (final item in result.items) {
+        await item.delete();
+      }
+      ToastManager.shared.show("Place deleted successfully!");
+
+      var userRef =
+      FirebaseFirestore.instance.collection("users").doc(user?.uid);
+      DocumentSnapshot<Map<String, dynamic>> profileData = await userRef.get();
+      int places = profileData.data()?["places"];
+      if (places <= 0) {
+        userRef.update({"places": 0});
+      } else {
+        userRef.update({"places": places - 1});
+      }
+    } catch (e) {
+      print('Error deleting image: $e');
+      ToastManager.shared.show("Failed to delete place!");
+    } finally {
+      LoadingManager.shared.hideLoading();
+    }
+  }
+
+  updatePlaceCount() async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    var userRef = FirebaseFirestore.instance.collection("users").doc(user?.uid);
+
+    DocumentSnapshot<Map<String, dynamic>> profileData = await userRef.get();
+
+    userRef.update({"places": profileData.data()?["places"] + 1});
   }
 
   approvePlace(placeId) async {
@@ -305,7 +368,8 @@ class VMNewPlace extends GetxController {
 
       for (var element in selectedImages.value) {
         Reference storageReference = FirebaseStorage.instance.ref().child(
-            'places/${user?.uid}/$documentId/${selectedImages.value.indexOf(element)}.png');
+            'places/${user?.uid}/$documentId/${selectedImages.value.indexOf(
+                element)}.png');
         UploadTask uploadTask = storageReference.putFile(element);
         await uploadTask.whenComplete(() async {
           String imageUrl = await storageReference.getDownloadURL();

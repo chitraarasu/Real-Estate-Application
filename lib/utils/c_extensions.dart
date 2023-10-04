@@ -94,3 +94,19 @@ hideKeyboard() {
 unFocus(PointerDownEvent event) {
   hideKeyboard();
 }
+
+String formatDuration(timestamp) {
+  Duration duration = DateTime.now().difference(timestamp);
+  if (duration.inDays > 0) {
+    final days = duration.inDays;
+    return '$days d${days > 1 ? 's' : ''} ago';
+  } else if (duration.inHours > 0) {
+    final hours = duration.inHours;
+    return '$hours h${hours > 1 ? 's' : ''} ago';
+  } else if (duration.inMinutes > 0) {
+    final minutes = duration.inMinutes;
+    return '$minutes m${minutes > 1 ? 's' : ''} ago';
+  } else {
+    return 'Just now';
+  }
+}

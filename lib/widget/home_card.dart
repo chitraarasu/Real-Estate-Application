@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:real_estate/screens/login/login_screen.dart';
@@ -121,6 +122,7 @@ class HomeCard extends StatelessWidget {
                             onTap: () {
                               if (placeData?.rejectedReason != null ||
                                   (placeData?.isApproved ?? false)) {
+                                data.deletePlace(placeData?.placeId);
                               } else {
                                 ToastManager.shared.show(
                                     "You can't delete the place when it's under review!");
@@ -156,7 +158,7 @@ class HomeCard extends StatelessWidget {
                         elevation: 1,
                       ),
                     ),
-                  if (!isMyPlaceList)
+                  if (!isMyPlaceList && !isManagePlaceList)
                     Align(
                       alignment: Alignment.topRight,
                       child: Padding(
@@ -183,25 +185,25 @@ class HomeCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                  if (isDetailedList && !isMyPlaceList)
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.all(6),
-                        child: CircleAvatar(
-                          backgroundColor: white,
-                          radius: FetchPixels.getPixelWidth(13),
-                          child: Padding(
-                            padding: const EdgeInsets.all(6.0),
-                            child: Icon(
-                              Icons.share_rounded,
-                              color: darkGrey,
-                              size: FetchPixels.getPixelWidth(14),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                  // if (isDetailedList && !isMyPlaceList)
+                  //   Align(
+                  //     alignment: Alignment.topLeft,
+                  //     child: Padding(
+                  //       padding: const EdgeInsets.all(6),
+                  //       child: CircleAvatar(
+                  //         backgroundColor: white,
+                  //         radius: FetchPixels.getPixelWidth(13),
+                  //         child: Padding(
+                  //           padding: const EdgeInsets.all(6.0),
+                  //           child: Icon(
+                  //             Icons.share_rounded,
+                  //             color: darkGrey,
+                  //             size: FetchPixels.getPixelWidth(14),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
                 ],
               ),
             ),
@@ -216,14 +218,26 @@ class HomeCard extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        getCustomFont(
-                          placeData?.name ?? "Marina Ca, Nu",
-                          isDetailedList ? 17.5 : 15,
-                          Colors.black,
-                          1,
-                          fontWeight: semiBold,
+                        Expanded(
+                          child: getCustomFont(
+                            placeData?.name ?? "Marina Ca, Nu",
+                            isDetailedList ? 17.5 : 15,
+                            Colors.black,
+                            1,
+                            fontWeight: semiBold,
+                          ),
                         ),
-                        Spacer(),
+                        hSpace(5),
+                        // if (!isMyPlaceList)
+                        //   getCustomFont(
+                        //     placeData != null
+                        //         ? formatDuration(placeData?.createdAt?.toDate())
+                        //         : "2h ago",
+                        //     14,
+                        //     darkGrey,
+                        //     1,
+                        //     fontWeight: medium,
+                        //   ),
                         if (isMyPlaceList)
                           GestureDetector(
                             onTap: () {
@@ -286,13 +300,13 @@ class HomeCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         getIconText(Icons.bed_rounded,
-                            "${placeData?.beds ?? 4} ${isDetailedList ? "Beds" : "Bds"}"),
+                            "${placeData?.beds ?? 0} ${isDetailedList ? "Beds" : "Bds"}"),
                         getIconText(Icons.bathroom_outlined,
-                            "${placeData?.bath ?? 4} ${isDetailedList ? "Bathrooms" : "Bath"}"),
+                            "${placeData?.bath ?? 0} ${isDetailedList ? "Bathrooms" : "Bath"}"),
                         Padding(
                           padding: const EdgeInsets.only(right: 4.0),
                           child: getIconText(Icons.width_wide_outlined,
-                              "${placeData?.sqft ?? 4} sqft"),
+                              "${placeData?.sqft ?? 0} sqft"),
                         ),
                       ],
                     ),
@@ -300,40 +314,83 @@ class HomeCard extends StatelessWidget {
                     if (!isMyPlaceList)
                       Row(
                         children: [
-                          CircleAvatar(
-                            backgroundImage: NetworkImage(
-                              "https://via.placeholder.com/400x400",
-                            ),
-                            radius: isDetailedList ? 11 : 10,
-                            backgroundColor: grey,
+                          Expanded(
+                            child: StreamBuilder(
+                                stream: FirebaseFirestore.instance
+                                    .collection("users")
+                                    .doc(placeData?.userId)
+                                    .snapshots(),
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<
+                                            DocumentSnapshot<
+                                                Map<String, dynamic>>>
+                                        snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Container();
+                                  } else if (snapshot.hasData) {
+                                    return Row(
+                                      children: [
+                                        CircleAvatar(
+                                          backgroundImage: snapshot.data!
+                                                      .data()?["photo_url"] ==
+                                                  null
+                                              ? null
+                                              : NetworkImage(
+                                                  snapshot.data!
+                                                      .data()!["photo_url"]
+                                                      .toString(),
+                                                ),
+                                          radius: isDetailedList ? 11 : 10,
+                                          backgroundColor: grey,
+                                          child: snapshot.data!
+                                                      .data()?["photo_url"] !=
+                                                  null
+                                              ? null
+                                              : Image(
+                                                  image:
+                                                      AssetImage("profile".png),
+                                                  color: Colors.white,
+                                                ),
+                                        ),
+                                        hSpace(7),
+                                        getCustomFont(
+                                          snapshot.data!
+                                                  .data()?["username"]
+                                                  .toString()
+                                                  .capitalize ??
+                                              "Amanda Simon",
+                                          isDetailedList ? 13 : 12,
+                                          Colors.black,
+                                          1,
+                                          fontWeight: bold,
+                                        ),
+                                      ],
+                                    );
+                                  } else {
+                                    return Container();
+                                  }
+                                }),
                           ),
-                          hSpace(7),
-                          getCustomFont(
-                            "John Adam",
-                            isDetailedList ? 13 : 12,
-                            Colors.black,
-                            1,
-                            fontWeight: bold,
-                          ),
-                          Spacer(),
                           if (isDetailedList)
                             Row(
                               children: [
                                 getCustomFont(
-                                  "₹200",
+                                  "₹ ${placeData?.price}",
                                   15,
                                   Colors.black,
                                   1,
                                   fontWeight: extraBold,
                                 ),
                                 if (isRentList)
-                                  getCustomFont(
-                                    " /month",
-                                    13,
-                                    Colors.black,
-                                    1,
-                                    fontWeight: regular,
-                                  ),
+                                  if (!(placeData?.isForSale ?? true))
+                                    getCustomFont(
+                                      " /month",
+                                      13,
+                                      Colors.black,
+                                      1,
+                                      fontWeight: regular,
+                                    ),
                               ],
                             )
                         ],

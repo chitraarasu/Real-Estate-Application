@@ -4,12 +4,15 @@ import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:real_estate/utils/c_extensions.dart';
 
+import '../../model/m_place.dart';
 import '../../utils/resizer/fetch_pixels.dart';
 import '../../widget/appbar/first_appbar.dart';
 import 'home_detail_view.dart';
 
 class MapView extends StatelessWidget {
-  MapView({super.key});
+  final List<PlaceModel> place;
+
+  MapView({super.key, required this.place});
 
   MapController _mapController = MapController();
 
@@ -40,20 +43,25 @@ class MapView extends StatelessWidget {
                   userAgentPackageName: 'com.example.app',
                 ),
                 MarkerLayer(
-                  markers: [
-                    Marker(
-                      point: LatLng(14.059274, 76.385020),
-                      builder: (context) => GestureDetector(
-                        onTap: () {
-                          Get.to(() => HomeDetailView());
-                        },
-                        child: Image(
-                          image: AssetImage("home_marker".png),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                    markers: place
+                        .map(
+                          (item) => Marker(
+                            point: LatLng(item.latitude!, item.longitude!),
+                            builder: (context) => GestureDetector(
+                              onTap: () {
+                                Get.to(
+                                  () => HomeDetailView(
+                                    placeData: item,
+                                  ),
+                                );
+                              },
+                              child: Image(
+                                image: AssetImage("home_marker".png),
+                              ),
+                            ),
+                          ),
+                        )
+                        .toList()),
               ],
             ),
           ),

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:real_estate/screens/home/search_screen.dart';
@@ -8,6 +9,8 @@ import 'package:real_estate/widget/search.dart';
 import 'package:real_estate/widget/widget_utils.dart';
 
 import '../../controller/route_controller.dart';
+import '../../model/m_place.dart';
+import '../../utils/manager/loading_manager.dart';
 import '../../widget/appbar/common_appbar.dart';
 import '../../widget/category_chip.dart';
 import '../../widget/home_card.dart';
@@ -20,7 +23,8 @@ class Home extends StatelessWidget {
   VMHome vmHome = VMHome.to;
   RxnInt selectedCategory = RxnInt();
 
-  Widget getTitle(String title, {bool isRent = false}) {
+  Widget getTitle(String title,
+      {bool isRent = false, required List<PlaceModel> place}) {
     return Row(
       children: [
         Expanded(
@@ -34,7 +38,7 @@ class Home extends StatelessWidget {
         ),
         GestureDetector(
           onTap: () {
-            Get.to(() => HomeList(title, isRent));
+            Get.to(() => HomeList(title, isRent, place));
           },
           child: getCustomFont(
             "View all",
@@ -107,31 +111,126 @@ class Home extends StatelessWidget {
                 ),
               ),
               vSpace(10),
-              getTitle("Buy a home"),
-              vSpace(15),
-              SizedBox(
-                height: FetchPixels.getPixelHeight(220),
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: vmHome.category.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return HomeCard();
+              Obx(
+                () => StreamBuilder(
+                  stream: selectedCategory.value == null
+                      ? FirebaseFirestore.instance
+                          .collection("places")
+                          .where("isApproved", isEqualTo: true)
+                          .where("isForSale", isEqualTo: true)
+                          .orderBy('created_at', descending: true)
+                          .snapshots()
+                      : FirebaseFirestore.instance
+                          .collection("places")
+                          .where("isApproved", isEqualTo: true)
+                          .where("isForSale", isEqualTo: true)
+                          .where("category_id",
+                              isEqualTo: (selectedCategory.value! + 1))
+                          .orderBy('created_at', descending: true)
+                          .snapshots(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                          snapshot) {
+                    // List channelUsers =
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return loading;
+                    } else if (snapshot.hasData) {
+                      List<PlaceModel> list = snapshot.data!.docs.map(
+                        (e) {
+                          return PlaceModel.fromJson(
+                            e.data(),
+                          );
+                        },
+                      ).toList();
+                      return list.isEmpty
+                          ? Container()
+                          : Column(
+                              children: [
+                                getTitle("Buy a home", place: list),
+                                vSpace(15),
+                                SizedBox(
+                                  height: FetchPixels.getPixelHeight(220),
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: list.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return HomeCard(
+                                        placeData: list[index],
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            );
+                    } else {
+                      print(snapshot.error);
+                      return getErrorMessage();
+                    }
                   },
                 ),
               ),
-              vSpace(25),
-              getTitle(
-                "Rent a home",
-                isRent: true,
-              ),
-              vSpace(15),
-              SizedBox(
-                height: FetchPixels.getPixelHeight(220),
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: vmHome.category.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return HomeCard();
+              Obx(
+                () => StreamBuilder(
+                  stream: selectedCategory.value == null
+                      ? FirebaseFirestore.instance
+                          .collection("places")
+                          .where("isApproved", isEqualTo: true)
+                          .where("isForSale", isEqualTo: false)
+                          .orderBy('created_at', descending: true)
+                          .snapshots()
+                      : FirebaseFirestore.instance
+                          .collection("places")
+                          .where("isApproved", isEqualTo: true)
+                          .where("isForSale", isEqualTo: false)
+                          .where("category_id",
+                              isEqualTo: (selectedCategory.value! + 1))
+                          .orderBy('created_at', descending: true)
+                          .snapshots(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                          snapshot) {
+                    // List channelUsers =
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return loading;
+                    } else if (snapshot.hasData) {
+                      List<PlaceModel> list = snapshot.data!.docs.map(
+                        (e) {
+                          return PlaceModel.fromJson(
+                            e.data(),
+                          );
+                        },
+                      ).toList();
+                      return list.isEmpty
+                          ? Container()
+                          : Column(
+                              children: [
+                                vSpace(25),
+                                getTitle(
+                                  "Rent a home",
+                                  isRent: true,
+                                  place: list,
+                                ),
+                                vSpace(15),
+                                SizedBox(
+                                  height: FetchPixels.getPixelHeight(220),
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: list.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return HomeCard(
+                                        placeData: list[index],
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            );
+                    } else {
+                      print(snapshot.error);
+                      return getErrorMessage();
+                    }
                   },
                 ),
               ),

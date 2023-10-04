@@ -239,6 +239,38 @@ class VMNewPlace extends GetxController {
     }
   }
 
+  approvePlace(placeId) async {
+    // LoadingManager.shared.showLoading();
+    try {
+      FirebaseFirestore.instance.collection("places").doc(placeId).update({
+        "isApproved": true,
+      });
+      Get.back();
+    } catch (e) {
+      print(e);
+      ToastManager.shared.show("Failed to approve place!");
+    } finally {
+      // LoadingManager.shared.hideLoading();
+    }
+  }
+
+  rejectPlace(placeId, reason) async {
+    // LoadingManager.shared.showLoading();
+    try {
+      FirebaseFirestore.instance.collection("places").doc(placeId).update({
+        "isApproved": false,
+        "rejected_reason": reason,
+      });
+      Get.back();
+      Get.back();
+    } catch (e) {
+      print(e);
+      ToastManager.shared.show("Failed to reject place!");
+    } finally {
+      // LoadingManager.shared.hideLoading();
+    }
+  }
+
   Future determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;

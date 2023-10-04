@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:real_estate/controller/route_controller.dart';
 import 'package:real_estate/model/m_place.dart';
-import 'package:real_estate/utils/c_extensions.dart';
 import 'package:real_estate/utils/manager/loading_manager.dart';
 
 import '../../utils/manager/font_manager.dart';
@@ -47,23 +45,7 @@ class YourPlaces extends StatelessWidget {
                 },
               ).toList();
               return list.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Lottie.asset("empty".lottie, width: 300),
-                          vSpace(20),
-                          getCustomFont(
-                            "Click above + button to create your place.",
-                            17,
-                            Colors.black,
-                            3,
-                            fontWeight: bold,
-                          ),
-                        ],
-                      ),
-                    )
+                  ? emptyView("Click above + button to create your place.")
                   : SingleChildScrollView(
                       child: Padding(
                         padding: EdgeInsets.symmetric(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:real_estate/screens/login/login_screen.dart';
 import 'package:real_estate/utils/c_extensions.dart';
+import 'package:real_estate/utils/manager/toast_manager.dart';
 import 'package:real_estate/widget/widget_utils.dart';
 
 import '../model/m_place.dart';
@@ -117,6 +118,14 @@ class HomeCard extends StatelessWidget {
                           // ),
                           PopupMenuItem(
                             value: 2,
+                            onTap: () {
+                              if (placeData?.rejectedReason != null ||
+                                  (placeData?.isApproved ?? false)) {
+                              } else {
+                                ToastManager.shared.show(
+                                    "You can't delete the place when it's under review!");
+                              }
+                            },
                             child: Row(
                               children: [
                                 Icon(
@@ -137,7 +146,7 @@ class HomeCard extends StatelessWidget {
                           ),
                         ],
                         icon: CircleAvatar(
-                          backgroundColor: white.withOpacity(.7),
+                          backgroundColor: white,
                           child: Icon(
                             Icons.more_vert_rounded,
                             size: 20,
@@ -160,7 +169,7 @@ class HomeCard extends StatelessWidget {
                             }
                           },
                           child: CircleAvatar(
-                            backgroundColor: white.withOpacity(.7),
+                            backgroundColor: white,
                             radius: FetchPixels.getPixelWidth(13),
                             child: Padding(
                               padding: const EdgeInsets.all(6.0),
@@ -180,7 +189,7 @@ class HomeCard extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(6),
                         child: CircleAvatar(
-                          backgroundColor: white.withOpacity(.7),
+                          backgroundColor: white,
                           radius: FetchPixels.getPixelWidth(13),
                           child: Padding(
                             padding: const EdgeInsets.all(6.0),

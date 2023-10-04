@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:lottie/lottie.dart';
+import 'package:real_estate/utils/c_extensions.dart';
 import 'package:real_estate/utils/manager/font_manager.dart';
 
 import '../utils/resizer/fetch_pixels.dart';
@@ -58,5 +60,25 @@ Widget vSpace(double size) {
 Widget hSpace(double size) {
   return SizedBox(
     width: FetchPixels.getPixelWidth(size),
+  );
+}
+
+Widget emptyView(String text) {
+  return Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Lottie.asset("empty".lottie, width: 300),
+        vSpace(20),
+        getCustomFont(
+          text,
+          17,
+          Colors.black,
+          3,
+          fontWeight: bold,
+        ),
+      ],
+    ),
   );
 }

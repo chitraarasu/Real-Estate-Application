@@ -6,6 +6,7 @@ import 'package:maps_launcher/maps_launcher.dart';
 import 'package:real_estate/screens/profile/pdf_viewer.dart';
 import 'package:real_estate/utils/c_extensions.dart';
 import 'package:real_estate/utils/manager/font_manager.dart';
+import 'package:real_estate/utils/manager/toast_manager.dart';
 import 'package:real_estate/widget/appbar/first_appbar.dart';
 import 'package:real_estate/widget/buttons/secondary_button.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -52,6 +53,8 @@ class HomeDetailView extends StatelessWidget {
   );
 
   rejectSheet() {
+    final data = Get.find<VMNewPlace>();
+
     Get.bottomSheet(
       Container(
         decoration: BoxDecoration(
@@ -100,6 +103,15 @@ class HomeDetailView extends StatelessWidget {
                                 horizontal: FetchPixels.getPixelWidth(17),
                               ),
                               color: Colors.redAccent,
+                              onTap: () {
+                                if (reason.text.isEmpty) {
+                                  ToastManager.shared.show(
+                                      "Please enter the reason for rejection!");
+                                } else {
+                                  data.rejectPlace(
+                                      placeData?.placeId, reason.text);
+                                }
+                              },
                             ),
                           ),
                         ],
@@ -284,11 +296,6 @@ class HomeDetailView extends StatelessWidget {
                           vSpace(15),
                           Row(
                             children: [
-                              const CircleAvatar(
-                                radius: 18,
-                                backgroundColor: grey,
-                              ),
-                              hSpace(10),
                               StreamBuilder(
                                   stream: FirebaseFirestore.instance
                                       .collection("users")
@@ -303,16 +310,43 @@ class HomeDetailView extends StatelessWidget {
                                         ConnectionState.waiting) {
                                       return Container();
                                     } else if (snapshot.hasData) {
-                                      return getCustomFont(
-                                        snapshot.data!
-                                                .data()?["username"]
-                                                .toString()
-                                                .capitalize ??
-                                            "Amanda Simon",
-                                        17,
-                                        Colors.black,
-                                        1,
-                                        fontWeight: bold,
+                                      return Row(
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 18,
+                                            backgroundColor: grey,
+                                            backgroundImage: snapshot.data!
+                                                        .data()?["photo_url"] ==
+                                                    null
+                                                ? null
+                                                : NetworkImage(
+                                                    snapshot.data!
+                                                        .data()!["photo_url"]
+                                                        .toString(),
+                                                  ),
+                                            child: snapshot.data!
+                                                        .data()?["photo_url"] !=
+                                                    null
+                                                ? null
+                                                : Image(
+                                                    image: AssetImage(
+                                                        "profile".png),
+                                                    color: Colors.white,
+                                                  ),
+                                          ),
+                                          hSpace(10),
+                                          getCustomFont(
+                                            snapshot.data!
+                                                    .data()?["username"]
+                                                    .toString()
+                                                    .capitalize ??
+                                                "Amanda Simon",
+                                            17,
+                                            Colors.black,
+                                            1,
+                                            fontWeight: bold,
+                                          ),
+                                        ],
                                       );
                                     } else {
                                       return Container();
@@ -335,13 +369,25 @@ class HomeDetailView extends StatelessWidget {
                           Row(
                             children: [
                               Expanded(
-                                child: getCustomFont(
-                                  placeData?.address ??
-                                      "64 Rosewood Street #2 San Francisco, CA",
-                                  18,
-                                  Colors.black,
-                                  2,
-                                  fontWeight: bold,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    getCustomFont(
+                                      "${placeData?.name}",
+                                      18,
+                                      Colors.black,
+                                      1,
+                                      fontWeight: bold,
+                                    ),
+                                    getCustomFont(
+                                      "${placeData?.address}",
+                                      12,
+                                      Colors.black,
+                                      2,
+                                      fontWeight: regular,
+                                    ),
+                                  ],
                                 ),
                               ),
                               hSpace(10),
@@ -502,6 +548,9 @@ class HomeDetailView extends StatelessWidget {
                                   child: PrimaryButton(
                                     "Approve",
                                     radius: 10,
+                                    onTap: () {
+                                      data.approvePlace(placeData?.placeId);
+                                    },
                                   ),
                                 ),
                               ],
@@ -536,7 +585,8 @@ class HomeDetailView extends StatelessWidget {
                               onTap: () {
                                 if (isMyPlace) {
                                   if (placeData?.rejectedReason != null) {
-                                    data.showAlert(context, "");
+                                    data.showAlert(
+                                        context, placeData?.rejectedReason);
                                   }
                                 } else {
                                   final Uri launchUri = Uri(

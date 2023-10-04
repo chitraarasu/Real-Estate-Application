@@ -57,14 +57,6 @@ class SearchScreen extends StatelessWidget {
       if (data.currentLocation != null) {
         double currentLat = data.currentLocation!.latitude;
         double currentLong = data.currentLocation!.longitude;
-        filteredList.map(
-          (item) => item.distanceFromCurrentLocation = calculateDistance(
-            item.latitude!,
-            item.longitude!,
-            currentLat,
-            currentLong,
-          ),
-        );
 
         filteredList.sort(
           (a, b) => calculateDistance(
@@ -267,6 +259,19 @@ class SearchScreen extends StatelessWidget {
                                     child: HomeCard(
                                       isDetailedList: true,
                                       placeData: filteredList[index],
+                                      distanceFromCL: locationFilterOn.value
+                                          ? data.currentLocation != null
+                                              ? calculateDistance(
+                                                  filteredList[index].latitude!,
+                                                  filteredList[index]
+                                                      .longitude!,
+                                                  data.currentLocation!
+                                                      .latitude,
+                                                  data.currentLocation!
+                                                      .longitude,
+                                                )
+                                              : null
+                                          : null,
                                     ),
                                   );
                                 },

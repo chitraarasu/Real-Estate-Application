@@ -19,6 +19,7 @@ class HomeCard extends StatelessWidget {
   final bool isRentList;
   final bool isMyPlaceList;
   final bool isManagePlaceList;
+  final double? distanceFromCL;
   final Function()? onTap;
   final PlaceModel? placeData;
 
@@ -30,6 +31,7 @@ class HomeCard extends StatelessWidget {
     this.isManagePlaceList = false,
     this.onTap,
     this.placeData,
+    this.distanceFromCL,
   });
 
   Widget getIconText(IconData iData, String text) {
@@ -44,6 +46,17 @@ class HomeCard extends StatelessWidget {
         getCustomFont(text, isDetailedList ? 13 : 11, darkGrey, 1),
       ],
     );
+  }
+
+  String formatDistance(double meters) {
+    if (meters == 0) {
+      return "0 m";
+    } else if (meters < 1000) {
+      return '${meters.toStringAsFixed(1)} m';
+    } else {
+      double kilometers = meters / 1000;
+      return '${kilometers.toStringAsFixed(1)} km';
+    }
   }
 
   @override
@@ -185,25 +198,30 @@ class HomeCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                  // if (isDetailedList && !isMyPlaceList)
-                  //   Align(
-                  //     alignment: Alignment.topLeft,
-                  //     child: Padding(
-                  //       padding: const EdgeInsets.all(6),
-                  //       child: CircleAvatar(
-                  //         backgroundColor: white,
-                  //         radius: FetchPixels.getPixelWidth(13),
-                  //         child: Padding(
-                  //           padding: const EdgeInsets.all(6.0),
-                  //           child: Icon(
-                  //             Icons.share_rounded,
-                  //             color: darkGrey,
-                  //             size: FetchPixels.getPixelWidth(14),
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
+                  if (distanceFromCL != null)
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.all(6),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: white,
+                            borderRadius: BorderRadius.circular(
+                                FetchPixels.getPixelWidth(10)),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: getCustomFont(
+                              "In ${formatDistance(distanceFromCL!)}",
+                              12,
+                              darkGrey,
+                              1,
+                              fontWeight: semiBold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),

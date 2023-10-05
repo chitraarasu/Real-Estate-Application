@@ -99,8 +99,8 @@ class VMLogin extends GetxController {
           print('Image URL: $imageUrl');
           await user?.updatePhotoURL(imageUrl);
           await user?.reload();
-          FirebaseFirestore.instance.collection("Users").doc(user?.uid).update({
-            "photoUrl": imageUrl,
+          FirebaseFirestore.instance.collection("users").doc(user?.uid).update({
+            "photo_url": imageUrl,
           });
           loggedInUser.value = FirebaseAuth.instance.currentUser;
           onDone();

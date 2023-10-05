@@ -15,6 +15,18 @@ import '../utils/manager/color_manager.dart';
 import '../utils/manager/font_manager.dart';
 import '../utils/resizer/fetch_pixels.dart';
 
+String formatPrice(double number) {
+  if (number >= 10000000) {
+    double crore = number / 10000000;
+    return '${crore.toStringAsFixed(1)} Cr';
+  } else if (number >= 100000) {
+    double lakh = number / 100000;
+    return '${lakh.toStringAsFixed(1)} L';
+  } else {
+    return number.toString();
+  }
+}
+
 class HomeCard extends StatefulWidget {
   final bool isDetailedList;
   final bool isRentList;
@@ -433,7 +445,7 @@ class _HomeCardState extends State<HomeCard> {
                             Row(
                               children: [
                                 getCustomFont(
-                                  "₹ ${widget.placeData?.price}",
+                                  "₹ ${formatPrice(double.parse(widget.placeData!.price!))}",
                                   15,
                                   Colors.black,
                                   1,

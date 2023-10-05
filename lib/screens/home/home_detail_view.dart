@@ -11,6 +11,7 @@ import 'package:real_estate/utils/manager/font_manager.dart';
 import 'package:real_estate/utils/manager/toast_manager.dart';
 import 'package:real_estate/widget/appbar/first_appbar.dart';
 import 'package:real_estate/widget/buttons/secondary_button.dart';
+import 'package:real_estate/widget/home_card.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../model/m_place.dart';
@@ -544,7 +545,7 @@ class _HomeDetailViewState extends State<HomeDetailView> {
                             Row(
                               children: [
                                 getCustomFont(
-                                  "₹ ${widget.placeData?.price}",
+                                  "₹ ${formatPrice(double.parse(widget.placeData!.price!))}",
                                   22,
                                   Colors.black,
                                   1,
@@ -594,7 +595,7 @@ class _HomeDetailViewState extends State<HomeDetailView> {
                       : Row(
                           children: [
                             getCustomFont(
-                              "₹ ${widget.placeData?.price}",
+                              "₹ ${formatPrice(double.parse(widget.placeData!.price!))}",
                               22,
                               Colors.black,
                               1,

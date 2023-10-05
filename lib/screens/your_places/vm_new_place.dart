@@ -240,6 +240,19 @@ class VMNewPlace extends GetxController {
           );
           updatePlaceCount();
 
+          name.controller.clear();
+          mobile.controller.clear();
+          selectedItem.value = null;
+          address.controller.clear();
+          price.controller.clear();
+          beds.controller.clear();
+          bath.controller.clear();
+          sqft.controller.clear();
+          selectedPdf.value = null;
+          selectedImages.value = [];
+          description.controller.clear();
+          customMarkers.value = [];
+
           Get.back();
         }
       }

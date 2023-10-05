@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:real_estate/screens/home/vm_home.dart';
 import 'package:real_estate/utils/c_extensions.dart';
 
 import '../../model/m_place.dart';
@@ -18,6 +19,7 @@ class MapView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    VMHome vmHome = VMHome.to;
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -52,6 +54,8 @@ class MapView extends StatelessWidget {
                                 Get.to(
                                   () => HomeDetailView(
                                     placeData: item,
+                                    isLiked:
+                                        vmHome.favorites.contains(item.placeId),
                                   ),
                                 );
                               },

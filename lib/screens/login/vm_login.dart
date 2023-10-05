@@ -7,6 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:real_estate/controller/route_controller.dart';
+import 'package:real_estate/screens/home/vm_home.dart';
 import 'package:real_estate/utils/manager/loading_manager.dart';
 import 'package:real_estate/utils/manager/toast_manager.dart';
 
@@ -190,7 +191,7 @@ class VMLogin extends GetxController {
   logout() async {
     await FirebaseAuth.instance.signOut();
     await FirebaseAuth.instance.currentUser?.reload();
-
+    VMHome.to.favorites.value = [];
     RouteController.to.currentPos.value = 0;
   }
 }

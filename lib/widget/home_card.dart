@@ -93,6 +93,7 @@ class _HomeCardState extends State<HomeCard> {
                 isManagePlaceList: widget.isManagePlaceList,
                 isMyPlace: widget.isMyPlaceList,
                 placeData: widget.placeData,
+                isLiked: isLiked.value,
               ));
         } else {
           widget.onTap!();
@@ -206,11 +207,12 @@ class _HomeCardState extends State<HomeCard> {
                             if (vmLoginData.isLoggedIn.value) {
                               isLiked.value = !isLiked.value;
                               if (isLiked.value) {
-                                vmHome
-                                    .addToFavorites(widget.placeData?.placeId);
+                                vmHome.addToFavorites(widget.placeData?.placeId,
+                                    widget.placeData?.userId);
                               } else {
                                 vmHome.removeFromFavorites(
-                                    widget.placeData?.placeId);
+                                    widget.placeData?.placeId,
+                                    widget.placeData?.userId);
                               }
                             } else {
                               openSignInAlert();

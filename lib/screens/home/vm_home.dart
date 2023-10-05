@@ -21,7 +21,7 @@ class VMHome extends GetxController {
     CategoryModel(9, "Penthouse", "penthouse"),
   ];
 
-  addToFavorites(placeId) async {
+  addToFavorites(placeId, placeOwnerId) async {
     User? user = FirebaseAuth.instance.currentUser;
 
     var userRef = FirebaseFirestore.instance.collection("users").doc(user?.uid);
@@ -35,11 +35,18 @@ class VMHome extends GetxController {
         userRef.update(
           {"favorites": favorites},
         );
+
+        var uR =
+            FirebaseFirestore.instance.collection("users").doc(placeOwnerId);
+        DocumentSnapshot<Map<String, dynamic>> pD = await uR.get();
+        if (pD.data() != null) {
+          uR.update({"likes": pD.data()?["likes"] + 1});
+        }
       }
     }
   }
 
-  removeFromFavorites(placeId) async {
+  removeFromFavorites(placeId, placeOwnerId) async {
     User? user = FirebaseAuth.instance.currentUser;
 
     var userRef = FirebaseFirestore.instance.collection("users").doc(user?.uid);
@@ -53,6 +60,18 @@ class VMHome extends GetxController {
         userRef.update(
           {"favorites": favorites},
         );
+
+        var uR =
+            FirebaseFirestore.instance.collection("users").doc(placeOwnerId);
+        DocumentSnapshot<Map<String, dynamic>> pD = await uR.get();
+        if (pD.data() != null) {
+          int likes = pD.data()?["likes"];
+          if (likes <= 0) {
+            uR.update({"likes": 0});
+          } else {
+            uR.update({"likes": likes - 1});
+          }
+        }
       }
     }
   }

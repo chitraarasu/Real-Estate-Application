@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maps_launcher/maps_launcher.dart';
+import 'package:real_estate/screens/home/vm_home.dart';
 import 'package:real_estate/screens/profile/pdf_viewer.dart';
 import 'package:real_estate/utils/c_extensions.dart';
 import 'package:real_estate/utils/manager/font_manager.dart';
@@ -27,12 +28,15 @@ class HomeDetailView extends StatefulWidget {
   final bool isManagePlaceList;
   final bool isMyPlace;
   final PlaceModel? placeData;
+  final bool isLiked;
 
-  HomeDetailView(
-      {super.key,
-      this.isManagePlaceList = false,
-      this.isMyPlace = false,
-      this.placeData});
+  HomeDetailView({
+    super.key,
+    this.isManagePlaceList = false,
+    this.isMyPlace = false,
+    this.placeData,
+    this.isLiked = false,
+  });
 
   @override
   State<HomeDetailView> createState() => _HomeDetailViewState();
@@ -56,6 +60,10 @@ class _HomeDetailViewState extends State<HomeDetailView> {
         userRef.update({"views": profileData.data()?["views"] + 1});
       }
     });
+
+    if (widget.isLiked) {
+      isLiked.value = true;
+    }
   }
 
   Widget getIconText(IconData iData, String text) {
@@ -165,6 +173,7 @@ class _HomeDetailViewState extends State<HomeDetailView> {
   @override
   Widget build(BuildContext context) {
     final vmLoginData = Get.find<VMLogin>();
+    VMHome vmHome = VMHome.to;
     final data = Get.find<VMNewPlace>();
 
     EdgeInsets edgeInsets = EdgeInsets.symmetric(horizontal: 15);
@@ -187,6 +196,15 @@ class _HomeDetailViewState extends State<HomeDetailView> {
                                 onPressed: () {
                                   if (vmLoginData.isLoggedIn.value) {
                                     isLiked.value = !isLiked.value;
+                                    if (isLiked.value) {
+                                      vmHome.addToFavorites(
+                                          widget.placeData?.placeId,
+                                          widget.placeData?.userId);
+                                    } else {
+                                      vmHome.removeFromFavorites(
+                                          widget.placeData?.placeId,
+                                          widget.placeData?.userId);
+                                    }
                                   } else {
                                     openSignInAlert();
                                   }

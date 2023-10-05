@@ -126,6 +126,7 @@ class Home extends StatelessWidget {
                       Map<String, dynamic>? userFireData =
                           snapshot.data!.data();
                       vmHome.favorites.value = userFireData?["favorites"] ?? [];
+
                       return Container();
                     } else {
                       return Container();

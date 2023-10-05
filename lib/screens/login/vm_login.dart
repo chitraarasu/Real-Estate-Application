@@ -5,7 +5,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:real_estate/controller/route_controller.dart';
 import 'package:real_estate/screens/home/vm_home.dart';
 import 'package:real_estate/utils/manager/loading_manager.dart';
@@ -69,7 +71,14 @@ class VMLogin extends GetxController {
       type: FileType.image,
     );
     if (result != null) {
-      selectedImages.value = File(result.files.first.path!);
+      final Directory tempDir = await getTemporaryDirectory();
+      var cResult = await FlutterImageCompress.compressAndGetFile(
+        result.files.first.path!,
+        "${tempDir.path}/${result.files.first.name.split('.').first}.png",
+        quality: 10,
+        format: CompressFormat.png,
+      );
+      selectedImages.value = File(cResult!.path);
       selectedImages.refresh();
     } else {}
   }

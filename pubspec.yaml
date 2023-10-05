@@ -60,6 +60,7 @@ dependencies:
   avatar_glow: ^2.0.2
   speech_to_text: ^6.3.0
   flutter_native_splash: ^2.3.3
+  path_provider: ^2.1.1
 
 
 dev_dependencies:

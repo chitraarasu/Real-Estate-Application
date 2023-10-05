@@ -5,9 +5,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:real_estate/model/m_place.dart';
 import 'package:real_estate/utils/manager/toast_manager.dart';
 import 'package:real_estate/widget/widget_utils.dart';
@@ -40,9 +42,18 @@ class VMNewPlace extends GetxController {
       type: FileType.image,
       allowMultiple: true,
     );
+    final Directory tempDir = await getTemporaryDirectory();
     if (result != null) {
       for (var e in result.files) {
-        selectedImages.value.insert(0, File(e.path!));
+        var cResult = await FlutterImageCompress.compressAndGetFile(
+          e.path!,
+          "${tempDir.path}/${e.name.split('.').first}.png",
+          quality: 25,
+          format: CompressFormat.png,
+        );
+        if (cResult != null) {
+          selectedImages.value.insert(0, File(cResult.path));
+        }
       }
       selectedImages.refresh();
     } else {}
@@ -95,15 +106,11 @@ class VMNewPlace extends GetxController {
 
   bool validate({bool withOTP = true}) {
     hideKeyboard();
-    if (name.text
-        .trim()
-        .isEmpty) {
+    if (name.text.trim().isEmpty) {
       ToastManager.shared.show("Please enter name!");
       return false;
     }
-    if (!mobile.text
-        .trim()
-        .isPhoneNumber) {
+    if (!mobile.text.trim().isPhoneNumber) {
       ToastManager.shared.show("Please enter valid number!");
       return false;
     }
@@ -111,15 +118,11 @@ class VMNewPlace extends GetxController {
       ToastManager.shared.show("Please select a category!");
       return false;
     }
-    if (address.text
-        .trim()
-        .isEmpty) {
+    if (address.text.trim().isEmpty) {
       ToastManager.shared.show("Please enter the address!");
       return false;
     }
-    if (price.text
-        .trim()
-        .isEmpty) {
+    if (price.text.trim().isEmpty) {
       ToastManager.shared.show("Please enter the price!");
       return false;
     }
@@ -127,9 +130,7 @@ class VMNewPlace extends GetxController {
       ToastManager.shared.show("Please enter valid price!");
       return false;
     }
-    if (beds.text
-        .trim()
-        .isEmpty) {
+    if (beds.text.trim().isEmpty) {
       ToastManager.shared.show("Please enter bedroom count!");
       return false;
     }
@@ -137,9 +138,7 @@ class VMNewPlace extends GetxController {
       ToastManager.shared.show("Please enter valid bedroom count!");
       return false;
     }
-    if (bath.text
-        .trim()
-        .isEmpty) {
+    if (bath.text.trim().isEmpty) {
       ToastManager.shared.show("Please enter bathroom count!");
       return false;
     }
@@ -147,9 +146,7 @@ class VMNewPlace extends GetxController {
       ToastManager.shared.show("Please enter valid bathroom count!");
       return false;
     }
-    if (sqft.text
-        .trim()
-        .isEmpty) {
+    if (sqft.text.trim().isEmpty) {
       ToastManager.shared.show("Please enter sqft!");
       return false;
     }
@@ -165,9 +162,7 @@ class VMNewPlace extends GetxController {
       ToastManager.shared.show("Please select place images!");
       return false;
     }
-    if (description.text
-        .trim()
-        .isEmpty) {
+    if (description.text.trim().isEmpty) {
       ToastManager.shared.show("Please enter description!");
       return false;
     }
@@ -181,26 +176,25 @@ class VMNewPlace extends GetxController {
   showAlert(context, reason) {
     showDialog(
       context: context,
-      builder: (ctx) =>
-          AlertDialog(
-            title: getCustomFont(
-              "Reason for rejection!",
-              18,
-              Colors.redAccent,
-              1,
-              fontWeight: bold,
-            ),
-            content: SingleChildScrollView(
-              child: getCustomFont(
-                reason,
-                14,
-                darkGrey,
-                1000,
-                fontWeight: semiBold,
-                textAlign: TextAlign.justify,
-              ),
-            ),
+      builder: (ctx) => AlertDialog(
+        title: getCustomFont(
+          "Reason for rejection!",
+          18,
+          Colors.redAccent,
+          1,
+          fontWeight: bold,
+        ),
+        content: SingleChildScrollView(
+          child: getCustomFont(
+            reason,
+            14,
+            darkGrey,
+            1000,
+            fontWeight: semiBold,
+            textAlign: TextAlign.justify,
           ),
+        ),
+      ),
     );
   }
 
@@ -262,10 +256,10 @@ class VMNewPlace extends GetxController {
     User? user = FirebaseAuth.instance.currentUser;
 
     var randomDoc =
-    FirebaseFirestore.instance.collection("places").doc(documentId);
+        FirebaseFirestore.instance.collection("places").doc(documentId);
 
     Reference storageReference =
-    FirebaseStorage.instance.ref().child('places/${user?.uid}/$documentId');
+        FirebaseStorage.instance.ref().child('places/${user?.uid}/$documentId');
 
     try {
       randomDoc.delete();
@@ -276,7 +270,7 @@ class VMNewPlace extends GetxController {
       ToastManager.shared.show("Place deleted successfully!");
 
       var userRef =
-      FirebaseFirestore.instance.collection("users").doc(user?.uid);
+          FirebaseFirestore.instance.collection("users").doc(user?.uid);
       DocumentSnapshot<Map<String, dynamic>> profileData = await userRef.get();
       int places = profileData.data()?["places"];
       if (places <= 0) {
@@ -368,8 +362,7 @@ class VMNewPlace extends GetxController {
 
       for (var element in selectedImages.value) {
         Reference storageReference = FirebaseStorage.instance.ref().child(
-            'places/${user?.uid}/$documentId/${selectedImages.value.indexOf(
-                element)}.png');
+            'places/${user?.uid}/$documentId/${selectedImages.value.indexOf(element)}.png');
         UploadTask uploadTask = storageReference.putFile(element);
         await uploadTask.whenComplete(() async {
           String imageUrl = await storageReference.getDownloadURL();

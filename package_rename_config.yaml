@@ -1,0 +1,13 @@
+package_rename_config:
+  android:
+    app_name: Real Estate
+    #    package_name: com.pickpauket
+    #    override_old_package: pauket
+    lang: kotlin
+
+  ios:
+    app_name: Real Estate
+#    bundle_name: pauket
+#    package_name: com.pickpauket
+
+#  dart run package_rename

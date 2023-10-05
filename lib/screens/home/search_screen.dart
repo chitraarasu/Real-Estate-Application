@@ -278,6 +278,7 @@ class SearchScreen extends StatelessWidget {
                                                       )
                                                     : null
                                                 : null,
+                                            isNeedLike: false,
                                           ),
                                         );
                                       },

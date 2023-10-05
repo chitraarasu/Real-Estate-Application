@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:real_estate/screens/home/search_screen.dart';
@@ -111,6 +112,25 @@ class Home extends StatelessWidget {
                 ),
               ),
               vSpace(10),
+              StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection("users")
+                      .doc(FirebaseAuth.instance.currentUser?.uid)
+                      .snapshots(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>>
+                          snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return loading;
+                    } else if (snapshot.hasData) {
+                      Map<String, dynamic>? userFireData =
+                          snapshot.data!.data();
+                      vmHome.favorites.value = userFireData?["favorites"] ?? [];
+                      return Container();
+                    } else {
+                      return Container();
+                    }
+                  }),
               Obx(
                 () => StreamBuilder(
                   stream: selectedCategory.value == null
@@ -133,7 +153,7 @@ class Home extends StatelessWidget {
                           snapshot) {
                     // List channelUsers =
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return loading;
+                      return Container();
                     } else if (snapshot.hasData) {
                       List<PlaceModel> list = snapshot.data!.docs.map(
                         (e) {
@@ -157,6 +177,8 @@ class Home extends StatelessWidget {
                                         (BuildContext context, int index) {
                                       return HomeCard(
                                         placeData: list[index],
+                                        isLiked: vmHome.favorites
+                                            .contains(list[index].placeId),
                                       );
                                     },
                                   ),
@@ -165,7 +187,7 @@ class Home extends StatelessWidget {
                             );
                     } else {
                       print(snapshot.error);
-                      return getErrorMessage();
+                      return Container();
                     }
                   },
                 ),
@@ -192,7 +214,7 @@ class Home extends StatelessWidget {
                           snapshot) {
                     // List channelUsers =
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return loading;
+                      return Container();
                     } else if (snapshot.hasData) {
                       List<PlaceModel> list = snapshot.data!.docs.map(
                         (e) {
@@ -221,6 +243,8 @@ class Home extends StatelessWidget {
                                         (BuildContext context, int index) {
                                       return HomeCard(
                                         placeData: list[index],
+                                        isLiked: vmHome.favorites
+                                            .contains(list[index].placeId),
                                       );
                                     },
                                   ),
@@ -229,7 +253,7 @@ class Home extends StatelessWidget {
                             );
                     } else {
                       print(snapshot.error);
-                      return getErrorMessage();
+                      return Container();
                     }
                   },
                 ),

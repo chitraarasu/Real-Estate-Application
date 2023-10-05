@@ -7,6 +7,8 @@ import '../../model/m_category.dart';
 class VMHome extends GetxController {
   static VMHome to = Get.find();
 
+  RxList favorites = RxList([]);
+
   List<CategoryModel> category = [
     CategoryModel(1, "House", "house"),
     CategoryModel(2, "Apartment", "apartment"),

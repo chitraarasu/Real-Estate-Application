@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:real_estate/controller/route_controller.dart';
+import 'package:real_estate/screens/home/vm_home.dart';
 import 'package:real_estate/widget/appbar/first_appbar.dart';
 
 import '../../model/m_place.dart';
@@ -15,6 +16,7 @@ class Favorites extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    VMHome vmHome = VMHome.to;
     return WillPopScope(
       onWillPop: () async {
         RouteController.to.currentPos.value = 0;
@@ -50,7 +52,8 @@ class Favorites extends StatelessWidget {
                       } else if (snapshot.hasData) {
                         Map<String, dynamic>? userFireData =
                             snapshot.data!.data();
-                        List favorites = userFireData?["favorites"] ?? [];
+                        vmHome.favorites.value =
+                            userFireData?["favorites"] ?? [];
                         return StreamBuilder(
                           stream: FirebaseFirestore.instance
                               .collection("places")
@@ -71,8 +74,8 @@ class Favorites extends StatelessWidget {
                               ).toList();
 
                               List<PlaceModel> favoriteList = list
-                                  .where((element) =>
-                                      favorites.contains(element.placeId))
+                                  .where((element) => vmHome.favorites
+                                      .contains(element.placeId))
                                   .toList();
 
                               return ListView.builder(
@@ -86,6 +89,7 @@ class Favorites extends StatelessWidget {
                                     child: HomeCard(
                                       isDetailedList: true,
                                       placeData: favoriteList[index],
+                                      isLiked: true,
                                     ),
                                   );
                                 },
